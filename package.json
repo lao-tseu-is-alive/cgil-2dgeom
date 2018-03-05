@@ -4,7 +4,7 @@
   "description": "2d geometry utility classes",
   "main": "dist/index.js",
   "scripts": {
-    "test": "jest"
+    "test": "tyu -- --watch "
   },
   "repository": {
     "type": "git",

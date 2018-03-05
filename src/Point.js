@@ -146,7 +146,7 @@ export default class Point {
     return `SRID=${srid};POINT(${this.x} ${this.y})`
   }
 
-  // TODO : implement toEWKB using this lib : https://github.com/cschwarz/wkx
+  // TO implement toEWKB I can maybe use this lib : https://github.com/cschwarz/wkx
 
   /**
    * give a GeoJSON (http://geojson.org/) representation of this class instance geometry

@@ -1,5 +1,4 @@
 export const isNumeric = (n) => (!isNaN(parseFloat(n)) && isFinite(n))
-export const getEl = (id) => document.getElementById(id)
 export const PRECISION = 10
 export const EPSILON = Number(`1e-${PRECISION}`)  // 1e-10 or 0.0000000001
 export const DIGITIZE_PRECISION = 2 // cm is enough in EPSG:21781
