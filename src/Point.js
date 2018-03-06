@@ -1,5 +1,4 @@
 import {isNumeric, EPSILON, AngularSystem, getRadians, roundNumber, PRECISION} from './utils'
-// import {PointCcwPointIdenticalException} from './PointError'
 
 // noinspection SpellCheckingInspection
 /**

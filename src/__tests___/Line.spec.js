@@ -69,8 +69,8 @@ describe('Line.js module', () => {
   
   describe('Line startPoint and endPoint accessors', () => {
     const L2 = new Line()
-    L2.startPoint = P1
-    L2.endPoint = P0
+    L2.startPoint = P0
+    L2.endPoint = P1
     const badValue = 'wrongXValue'
     const wrongPoint = new Point()
     try {
@@ -81,11 +81,11 @@ describe('Line.js module', () => {
     }
     test('should allow to set startPoint correctly', () => {
       expect(L2)
-        .toHaveProperty('startPoint', P1)
+        .toHaveProperty('startPoint', P0)
     })
     test('should allow to set endPoint correctly', () => {
       expect(L2)
-        .toHaveProperty('endPoint', P0)
+        .toHaveProperty('endPoint', P1)
     })
     test('should throw an error if startPoint is not of type Point', () => {
       expect(function () {
@@ -107,7 +107,22 @@ describe('Line.js module', () => {
         const LineWrong = new Line(P0, wrongPoint)
       }).toThrow('Class Line needs a valid endPoint')
     })
-    
+    test('should assign startPoint by value (copy)', () => {
+      const POrigin = new Point()
+      const L3 = new Line(POrigin, P1 )
+      const POriginCopy = POrigin.copyRel(0,0)
+      POrigin.moveTo(10,20)
+      expect(L3)
+        .toHaveProperty('startPoint', POriginCopy)
+    })
+    test('should assign endPoint by value (copy)', () => {
+      const POrigin = new Point()
+      const L3 = new Line(P1, POrigin )
+      const POriginCopy = POrigin.copyRel(0,0)
+      POrigin.moveTo(10,20)       
+      expect(L3)
+        .toHaveProperty('endPoint', POriginCopy)
+    })
   })
   
   describe('Line.toString()', () => {
