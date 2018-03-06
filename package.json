@@ -30,6 +30,7 @@
   "homepage": "https://github.com/lao-tseu-is-alive/cgil-2dgeom#readme",
   "jest": {
     "verbose": true,
+    "coverageDirectory": "./coverage/",    
     "collectCoverage": true,
     "collectCoverageFrom": [
       "**/src/*.{js,jsx}",
