@@ -4,6 +4,9 @@
   "description": "2d geometry utility classes",
   "main": "dist/index.js",
   "scripts": {
+    "dev": "poi",
+    "build": "poi build",
+    "lint": "eslint src/**/*.js",
     "test": "tyu -- --watch "
   },
   "repository": {
@@ -34,8 +37,11 @@
     ]
   },
   "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-jest": "^22.4.1",
     "jest": "^22.4.2",
     "poi": "^9.6.13",
+    "regenerator-runtime": "^0.11.1",
     "tyu": "^1.0.5"
   }
 }

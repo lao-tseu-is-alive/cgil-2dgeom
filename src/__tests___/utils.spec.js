@@ -1,5 +1,5 @@
 // noinspection NpmUsedModulesInstalled
-import * as U from '../src/utils'
+import * as U from '../utils'
 
 // noinspection Annotator
 describe('utils.js module', () => {

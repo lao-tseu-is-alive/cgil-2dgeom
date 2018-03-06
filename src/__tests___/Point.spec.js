@@ -1,7 +1,7 @@
 // noinspection NpmUsedModulesInstalled
 /* eslint-disable no-unused-expressions */
-import Point from '../src/Point'
-import {AngularSystem} from '../src/utils'
+import Point from '../Point'
+import {AngularSystem} from '../utils'
 
 // noinspection Annotator
 describe('Point.js module', () => {
@@ -69,6 +69,44 @@ describe('Point.js module', () => {
       expect(P2).toHaveProperty('y', 4.0)
     })
   })
+  
+  describe('Point refuses wrong values for x and y', () => {
+    let PWrong = new Point()
+    const badX = 'l25' // this is not a numeric value
+    const badY = 'one'
+    test('should throw an Error if invalid point x coordinate is given ', () => {
+      expect(function () {
+        const PointWithXWrong = new Point()
+        PointWithXWrong .x = badX
+      }).toThrow('Point.x setter needs a numeric value')
+    })
+    try {
+      PWrong.y = badY
+    } catch (e) {
+      // console.log(`PWrong.y = ${badY} throws `, e)
+    }
+    test(
+      'should set Point.isInvalid to true when given incorrect x or y value ', () => {
+        expect(PWrong).toHaveProperty('isInvalid', true)
+      })
+    test(
+      'should set Point.InvalidReason to string when given incorrect x or y value ',
+      () => {
+        expect(PWrong).toHaveProperty('InvalidReason', `cannot set y to ${badY} because it is not a numeric value`)
+      }
+    )
+    test('should set X to NaN when given incorrect x value ', () => {
+      try {
+        PWrong.x = badX
+      } catch (e) {
+        // to allow doing this test without throwing the error
+      }
+      expect(PWrong.x).toBe(NaN)
+    })
+    test('should set Y to NaN when given incorrect x value ', () => {
+      expect(PWrong.y).toBe(NaN)
+    })
+  })
 
   describe('Point.fromPolar(radius, theta)', () => {
     test('should throw an Error when no parameters are passed', () => {
@@ -100,30 +138,7 @@ describe('Point.js module', () => {
       expect(P1.equal(new Point(5.3, 2.1))).toEqual(true)
     })
   })
-
-  describe('Point stores isInvalid and NaN when using wrong values', () => {
-    const badY = 'house'
-    const PWrong = new Point('one', badY)
-    test(
-      'should set Point.isInvalid to true when given incorrect x or y value ',
-      () => {
-        expect(PWrong).toHaveProperty('isInvalid', true)
-      }
-    )
-    test(
-      'should set Point.InvalidReason to string when given incorrect x or y value ',
-      () => {
-        expect(PWrong).toHaveProperty('InvalidReason', `cannot set y to ${badY} because it is not a numeric value`)
-      }
-    )
-    test('should set X to NaN when given incorrect x value ', () => {
-      expect(PWrong.x).toBe(NaN)
-    })
-    test('should set Y to NaN when given incorrect x value ', () => {
-      expect(PWrong.y).toBe(NaN)
-    })
-  })
-
+  
   describe('Point.toString()', () => {
     test('should return a correct string representation', () => {
       expect(P1.toString()).toEqual(`(${1.0}, ${2.0})`)
@@ -257,6 +272,7 @@ describe('Point.js module', () => {
       expect(P0.moveRelPolar(3.0, 90).equal(P1)).toEqual(true)
     })
   })
+
   describe('Point can be copied', () => {
     test(
       'copyRelArray should throw a TypeError when parameters are not numbers',
@@ -303,6 +319,7 @@ describe('Point.js module', () => {
       expect(P0.copyRelPolar(3.0, 90).equal(P1)).toEqual(true)
     })
   })
+
   describe('Point.js distance method ', () => {
     const P1bis = new Point(1, 2)
     test(
@@ -463,4 +480,5 @@ describe('Point.js module', () => {
       }
     )
   })
+  
 })

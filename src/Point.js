@@ -85,6 +85,7 @@ export default class Point {
       this._x = NaN
       this.isInvalid = true
       this.InvalidReason = `cannot set x to ${value} because it is not a numeric value`
+      throw new TypeError(`Point.x setter needs a numeric value and ${value} is not`)
     }
   }
 
@@ -107,6 +108,7 @@ export default class Point {
       this._y = NaN
       this.isInvalid = true
       this.InvalidReason = `cannot set y to ${value} because it is not a numeric value`
+      throw new TypeError(`Point.y setter needs a numeric value and ${value} is not`)
     }
   }
 

@@ -6,17 +6,6 @@ const lineDefaultOptions = {
   strokeWidth: 2
 }
 
-class LineError extends Error {
-  constructor (errorMessage) {
-    super()
-    this.message = errorMessage
-    this.CLASSNAME = 'Line'
-    this.toString = function () {
-      return `Error in Class ${this.CLASSNAME}: ${this.message}`
-    }
-  }
-}
-
 /**
  * Class representing  a line in 2 dimension cartesian space
  */
@@ -29,10 +18,12 @@ export default class Line {
    */
   constructor (startPoint = new Point(), endPoint = new Point(1, 1), params) {
     this._options = Object.assign({}, lineDefaultOptions, params)
-    if (startPoint.isInvalid) throw new LineError(`I need a valid startPoint : ${startPoint.InvalidReason}`)
-    if (endPoint.isInvalid) throw new LineError(`I need a valid endPoint : ${endPoint.InvalidReason}`)
-    this._startPoint = startPoint
-    this._endPoint = endPoint
+    // using property setters above
+    this.startPoint = startPoint
+    this.endPoint = endPoint
+    if (endPoint.equal(startPoint)) {
+      throw new TypeError(`Class Line needs a endPoint different from startPoint: ${endPoint.toString()} == ${startPoint.toString()}`)
+    }
   }
 
   /**
@@ -45,10 +36,16 @@ export default class Line {
 
   /**
    * Set the starting Point.
-   * @param {Point} value is the starting Point
+   * @param {Point} otherPoint is the starting Point
    */
-  set startPoint (value) {
-    this._startPoint = value
+  set startPoint (otherPoint) {
+    if (otherPoint instanceof Point) {
+      if (otherPoint.isInvalid) {
+        throw new TypeError(`Class Line needs a valid startPoint : ${otherPoint.InvalidReason}`)
+      } else  this._startPoint = otherPoint
+    } else {
+      throw new TypeError('startPoint setter needs parameter otherPoint of type Point')
+    }
   }
 
   /**
@@ -61,10 +58,16 @@ export default class Line {
 
   /**
    * Set the endPoint value
-   * @param {Point} value is the endPoint
+   * @param {Point} otherPoint is the endPoint
    */
-  set endPoint (value) {
-    this._endPoint = value
+  set endPoint (otherPoint) {
+    if (otherPoint instanceof Point) {
+      if (otherPoint.isInvalid) {
+        throw new TypeError(`Class Line needs a valid endPoint : ${otherPoint.InvalidReason}`)
+      } else this._endPoint = otherPoint
+    } else {
+      throw new TypeError('endPoint setter needs parameter otherPoint of type Point')
+    }
   }
 
   /**
