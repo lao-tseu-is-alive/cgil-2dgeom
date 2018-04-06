@@ -107,6 +107,16 @@ describe('Line.js module', () => {
         const LineWrong = new Line(P0, wrongPoint)
       }).toThrow('Class Line needs a valid endPoint')
     })
+    test('should throw an error if startPoint setter receives point equals endPoint', () => {
+      expect(function () {
+        L2.startPoint = P1
+      }).toThrow('Class Line needs a startPoint different from endPoint')
+    })
+    test('should throw an error if endPoint setter receives point equals startPoint', () => {
+      expect(function () {
+        L2.endPoint = P0
+      }).toThrow('Class Line needs a endPoint different from startPoint')
+    })
     test('should assign startPoint by value (copy)', () => {
       const POrigin = new Point()
       const L3 = new Line(POrigin, P1 )

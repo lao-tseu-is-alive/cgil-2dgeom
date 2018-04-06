@@ -42,7 +42,14 @@ export default class Line {
     if (otherPoint instanceof Point) {
       if (otherPoint.isInvalid) {
         throw new TypeError(`Class Line needs a valid startPoint : ${otherPoint.InvalidReason}`)
-      } else  this._startPoint = Point.fromPoint(otherPoint) // make a copy of otherPoint values we don't want keep a reference
+      } else {
+        if (this._endPoint !== undefined && otherPoint.equal(this._endPoint)) {
+          throw new TypeError(`Class Line needs a startPoint different from endPoint : ${otherPoint.toString()} == ${this._endPoint.toString()}`)
+        } else {
+          // make a copy of otherPoint values we don't want keep a reference
+          this._startPoint = Point.fromPoint(otherPoint)
+        }  
+      }         
     } else {
       throw new TypeError('startPoint setter needs parameter otherPoint of type Point')
     }
@@ -64,7 +71,15 @@ export default class Line {
     if (otherPoint instanceof Point) {
       if (otherPoint.isInvalid) {
         throw new TypeError(`Class Line needs a valid endPoint : ${otherPoint.InvalidReason}`)
-      } else this._endPoint = Point.fromPoint(otherPoint) // make a copy of otherPoint values we don't want keep a reference 
+      } else {
+        if (this._startPoint !== undefined && otherPoint.equal(this._startPoint)) {
+          throw new TypeError(`Class Line needs a endPoint different from startPoint: ${otherPoint.toString()} == ${this._startPoint.toString()}`)
+        } else {
+          // make a copy of otherPoint values we don't want keep a reference
+          this._endPoint = Point.fromPoint(otherPoint)
+        }
+        
+      }  
     } else {
       throw new TypeError('endPoint setter needs parameter otherPoint of type Point')
     }
