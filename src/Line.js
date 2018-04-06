@@ -16,7 +16,7 @@ export default class Line {
    * @param {Point} endPoint of the Line
    * @param {Object} params
    */
-  constructor (startPoint = new Point(), endPoint = new Point(1, 1), params) {
+  constructor (startPoint = new Point(), endPoint = new Point(1, 1), params = null) {
     this._options = Object.assign({}, lineDefaultOptions, params)
     // using property setters above
     this.startPoint = startPoint
@@ -48,8 +48,8 @@ export default class Line {
         } else {
           // make a copy of otherPoint values we don't want keep a reference
           this._startPoint = Point.fromPoint(otherPoint)
-        }  
-      }         
+        }
+      }
     } else {
       throw new TypeError('startPoint setter needs parameter otherPoint of type Point')
     }
@@ -78,8 +78,7 @@ export default class Line {
           // make a copy of otherPoint values we don't want keep a reference
           this._endPoint = Point.fromPoint(otherPoint)
         }
-        
-      }  
+      }
     } else {
       throw new TypeError('endPoint setter needs parameter otherPoint of type Point')
     }

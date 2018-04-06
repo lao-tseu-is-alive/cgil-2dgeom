@@ -1,3 +1,3 @@
-import Point from 'Point'
-
-// export Point as Point
+import Point from './Point'
+import Line from './Line'
+export {Point, Line}

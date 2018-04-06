@@ -27,6 +27,7 @@ describe('Point.js module', () => {
     test(
       'should allow new Point("1.12345689") with a x as string number and y=0 implicit',
       () => {
+        // noinspection JSCheckFunctionSignatures
         const P3 = new Point('1.12345689') // y=0 implicitly
         expect(P3).toHaveProperty('x', 1.12345689)
         expect(P3).toHaveProperty('y', 0)
@@ -34,6 +35,7 @@ describe('Point.js module', () => {
     )
 
     test('should allow to set y to a valid string number value correctly', () => {
+      // noinspection JSCheckFunctionSignatures
       const P3 = new Point('1.12345689') // y=0 implicitly
       P3.y = '-1.123456789'
       expect(P3).toHaveProperty('y', -1.123456789)
@@ -42,6 +44,7 @@ describe('Point.js module', () => {
       'should allow to construct a new Point from an array of 2 numbers ',
       () => {
         try {
+          // noinspection JSCheckFunctionSignatures
           const PointFromArray = new Point([1.0, 2.0])
           expect(PointFromArray).toHaveProperty('x', 1.0)
           expect(PointFromArray).toHaveProperty('y', 2.0)

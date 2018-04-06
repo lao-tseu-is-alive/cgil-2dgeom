@@ -9,16 +9,17 @@
 module.exports = {
   entry: './src/index.js',
   filename: {
-    js: 'cgil2dgeom.js',
+    js: 'cgil2dgeom.cjs.js' // CommonJS format to be used with bundlers like webpack
   },
+  library: true,
   sourceMap: false,
   html: false,
+  // format can be 'cjs' for CommonJS or 'umd' for browser
+  // https://poi.js.org/#/recipes/cjs-and-umd-format
   format: 'cjs',
   babel: {
     babelrc: true,
     cacheDirectory: true,
-    presets: [
-
-  ]
+    presets: []
   }
 }

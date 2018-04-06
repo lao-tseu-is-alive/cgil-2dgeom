@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Testing cgil-2dgeom with UMD library</title>
+  <script src="../dist/cgil2dgeom.min.js"></script>
+  <style>
+    html{
+      font-family: Arial, Helvetica;
+      font-size: 1.2rem;
+    }
+    #cgcode {
+      background: #000066;
+      color: rgba(121, 245, 20, 0.91);
+      border: solid 1px;
+      padding: 1em;
+    }
+  </style>
+</head>
+<body>
+<h2>Testing cgil-2dgeom with UMD library</h2>
+<p>This page is to test usage of the UMD version of the library in the browser 
+  <a href="https://poi.js.org/#/recipes/cjs-and-umd-format">(more info on library format in POI web...)</a></p>
+
+<pre id="cgcode"></pre>
+
+<script type="application/javascript">
+  let ElCode = document.getElementById('cgcode')
+  function log(msg) {
+    ElCode.innerHTML += '<br>' + msg
+    console.log(msg)
+  }
+  
+  let P0 = new cgil2dgeom.Point()
+  log('P0 : ' + P0.toString())
+  let P1 = new cgil2dgeom.Point(1,1)
+  log('P1 : ' + P1.toString())
+  let L1 = new cgil2dgeom.Line(P0, P1)
+  log('L1 : ' + L1.toString())
+</script>
+</body>
+</html>

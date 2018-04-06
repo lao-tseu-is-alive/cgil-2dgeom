@@ -8,7 +8,7 @@ describe('Line.js module', () => {
   const P0 = new Point()
   const P1 = new Point(1.0, 2.0)
   const L1 = new Line(P0, P1)
-  
+
   describe('Line constructor', () => {
     test(
       'constructor with default parameters should return an instance of Line',
@@ -45,6 +45,7 @@ describe('Line.js module', () => {
     const badValue = 'realWrongXValue'
     const wrongPoint = new Point()
     try {
+      // noinspection JSValidateTypes
       wrongPoint.x = badValue
     } catch (e) {
       // console.log(e)
@@ -66,7 +67,7 @@ describe('Line.js module', () => {
       }).toThrow('Class Line needs a endPoint different from startPoint')
     })
   })
-  
+
   describe('Line startPoint and endPoint accessors', () => {
     const L2 = new Line()
     L2.startPoint = P0
@@ -94,7 +95,8 @@ describe('Line.js module', () => {
     })
     test('should throw an error if startPoint is not of type Point', () => {
       expect(function () {
-        const LineWrong = new Line([1,0], P1)
+        // noinspection JSCheckFunctionSignatures
+        const LineWrong = new Line([1, 0], P1)
       }).toThrow('startPoint setter needs parameter otherPoint of type Point')
     })
     test('should throw an error if invalid startPoint', () => {

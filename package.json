@@ -5,10 +5,12 @@
   "main": "dist/index.js",
   "scripts": {
     "dev": "poi",
-    "build": "poi build",
-    "lint": "eslint src/**/*.js",
+    "build:CJS": "poi build -c poi.config-CommonJS.js ",
+    "build:UMD": "poi build -c poi.config-umd.js ",
+    "lint": "eslint src/*.js",
     "test": "tyu -- --watch ",
-    "test-ci-travis": "jest -i"
+    "test-ci-travis": "jest -i",
+    "jest": "jest"
   },
   "repository": {
     "type": "git",
@@ -30,7 +32,7 @@
   "homepage": "https://github.com/lao-tseu-is-alive/cgil-2dgeom#readme",
   "jest": {
     "verbose": true,
-    "coverageDirectory": "./coverage/",    
+    "coverageDirectory": "./coverage/",
     "collectCoverage": true,
     "collectCoverageFrom": [
       "**/src/*.{js,jsx}",
@@ -40,10 +42,18 @@
   },
   "devDependencies": {
     "babel-core": "^6.26.0",
+    "babel-eslint": "^8.2.2",
     "babel-jest": "^22.4.1",
+    "eslint": "^4.19.1",
+    "eslint-config-standard": "^11.0.0",
+    "eslint-config-xo": "^0.20.1",
+    "eslint-import-resolver-webpack": "^0.9.0",
+    "eslint-plugin-import": "^2.10.0",
+    "eslint-plugin-standard": "^3.0.1",
     "jest": "^22.4.2",
     "poi": "^9.6.13",
     "regenerator-runtime": "^0.11.1",
-    "tyu": "^1.0.5"
+    "tyu": "^1.0.5",
+    "xo": "^0.20.3"
   }
 }

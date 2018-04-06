@@ -43,6 +43,7 @@ export default class Point {
       const tmpX = radius * Math.cos(angle)
       tmpPoint.x = Math.abs(tmpX) <= EPSILON ? 0 : roundNumber(tmpX, PRECISION)
       const tmpY = radius * Math.sin(angle)
+      // noinspection JSSuspiciousNameCombination
       tmpPoint.y = Math.abs(tmpY) <= EPSILON ? 0 : roundNumber(tmpY, PRECISION)
       // console.log(`roundNumber(${tmpX},10):${roundNumber(tmpX, PRECISION)}`)
       // console.log(`roundNumber(${tmpY},10):${roundNumber(tmpY, PRECISION)}`)
@@ -79,6 +80,7 @@ export default class Point {
    */
   set x (value) {
     if (isNumeric(value)) {
+      // noinspection JSCheckFunctionSignatures
       this._x = parseFloat(value)
     } else {
       this._x = NaN
@@ -102,6 +104,7 @@ export default class Point {
    */
   set y (value) {
     if (isNumeric(value)) {
+      // noinspection JSCheckFunctionSignatures
       this._y = parseFloat(value)
     } else {
       this._y = NaN
@@ -323,6 +326,7 @@ export default class Point {
     }
   }
 
+  // noinspection FunctionTooLongJS
   /** ccw allows to know if traveling from P0 to P1 to P2 we turn counterclockwise
    *  assuming we are in cartesian space where X is directed to right and Y axis goes up
    *  and assuming the 3 points are distinct points
@@ -345,7 +349,7 @@ export default class Point {
    */
   static ccw (P0, P1, P2) {
     if ((P0 instanceof Point) && (P1 instanceof Point) && (P2 instanceof Point)) {
-      var result = { counterClockwise: null, allPointsAreColinear: null, value: null }
+      let result = { counterClockwise: null, allPointsAreColinear: null, value: null }
       const dx1 = P1.x - P0.x
       const dx2 = P2.x - P0.x
       const dy1 = P1.y - P0.y
@@ -367,7 +371,7 @@ export default class Point {
       const CPa = dx1 * dy2 // first term of "CrossProduct" or signed magnitude of 3d cross product vector with z=0
       const CPb = dy1 * dx2 // second term of CrossProduct or signed magnitude
       console.log(`Cpa = (dx1 * dy2) = ${CPa}, CPb = dy1 * dx2 = ${CPb}`)
-      if (Math.abs(CPa - CPb) <= EPSILON) { // colinear cases (epsilon test is here to handle float erros)
+      if (Math.abs(CPa - CPb) <= EPSILON) { // colinear cases (epsilon test is here to handle float errors)
         console.log(`==> ALL 3 POINTS ARE COLINEAR because = (Cpa - CPb) <= EPSILON `)
         result.allPointsAreColinear = true
         if (((dx1 * dx2) < 0) || ((dy1 * dy2) < 0)) {
