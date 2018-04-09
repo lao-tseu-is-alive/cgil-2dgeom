@@ -1,5 +1,5 @@
 const poi = require('poi')
-const config = require('./poi.config')
+const config = require('./poi.config-umd')
 
 const app = poi(config)
 const webpackConfig = app.createWebpackConfig()

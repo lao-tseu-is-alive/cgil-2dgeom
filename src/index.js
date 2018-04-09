@@ -1,3 +1,4 @@
 import Point from './Point'
 import Line from './Line'
-export {Point, Line}
+import * as utils from './utils'
+export {Point, Line, utils}

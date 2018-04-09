@@ -124,6 +124,19 @@ export default class Point {
   }
 
   /**
+   * give a string representation of this class instance
+   * @param {string} separator placed between x and y values ', ' by default
+   * @returns {string}
+   */
+  toStr (separator = ',', enclosingInParenthesis = true, precision = 2) {
+    if (enclosingInParenthesis) {
+      return `(${roundNumber(this.x, precision)}${separator} ${roundNumber(this.y, 2)})`
+    } else {
+      return `${roundNumber(this.x, precision)}${separator} ${roundNumber(this.y, 2)}`
+    }
+  }
+
+  /**
    * give an array representation of this class instance
    * @returns {Array}
    */
