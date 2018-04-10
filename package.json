@@ -1,8 +1,8 @@
 {
-  "name": "cgil-2dgeom",
+  "name": "cgil-geom2d",
   "version": "1.0.0",
-  "description": "2d geometry utility classes",
-  "main": "dist/index.js",
+  "description": "2d geometry ES6 javascript classes like Point Lines with polar coordinates conversions..",
+  "main": "dist/geom2d.min.js",
   "scripts": {
     "dev": "poi",
     "build:CJS": "poi build -c poi.config-CommonJS.js ",
@@ -14,7 +14,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/lao-tseu-is-alive/cgil-2dgeom.git"
+    "url": "https://github.com/lao-tseu-is-alive/cgil-2dgeom.git"
   },
   "keywords": [
     "2d",
@@ -22,7 +22,13 @@
     "class",
     "point",
     "line",
-    "circle"
+    "polar coordinates"
+  ],
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "http://www.opensource.org/licenses/mit-license.php"
+    }
   ],
   "author": "cgil <lao.tseu.is.alive@gmail.com>",
   "license": "MIT",
@@ -49,11 +55,12 @@
     "eslint-config-xo": "^0.20.1",
     "eslint-import-resolver-webpack": "^0.9.0",
     "eslint-plugin-import": "^2.10.0",
+    "eslint-plugin-node": "^6.0.1",
+    "eslint-plugin-promise": "^3.7.0",
     "eslint-plugin-standard": "^3.0.1",
     "jest": "^22.4.2",
     "poi": "^9.6.13",
     "regenerator-runtime": "^0.11.1",
-    "tyu": "^1.0.5",
-    "xo": "^0.20.3"
+    "tyu": "^1.0.5"
   }
 }

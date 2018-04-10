@@ -9,7 +9,7 @@
 module.exports = {
   entry: './src/index.js',
   filename: {
-    js: 'cgil2dgeom.cjs.js' // CommonJS format to be used with bundlers like webpack
+    js: 'geom2d.cjs.js' // CommonJS format to be used with bundlers like webpack
   },
   library: true,
   sourceMap: false,

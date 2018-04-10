@@ -12,14 +12,16 @@ is licensed under the terms of the MIT License.
 
 
 ## Example
-let's use the library Point class to create a nice 12 petal's flowers using a polar equation like this : r = a sin 6θ
-https://lao-tseu-is-alive.github.io/cgil-2dgeom/docs/example_UMD.html
+let's use the library Point class to create a nice 12 petal's flowers using a polar equation like this : 
+**r = a sin 6θ**
+
+[Jump to the full example file](https://lao-tseu-is-alive.github.io/cgil-2dgeom/docs/example_UMD.html)
 
 ```html
+<script src="../dist/cgil2dgeom.min.js"></script>
 <svg height="500" width="500">
   <line  id='xaxis' x1="250" y1="0" x2="250" y2="500" style="stroke:rgb(255,255,255);stroke-width:2" />
-  <line  id='yaxis' x1="0" y1="250" x2="500" y2="250" style="stroke:rgb(255,255,255);stroke-width:2" />
-  
+  <line  id='yaxis' x1="0" y1="250" x2="500" y2="250" style="stroke:rgb(255,255,255);stroke-width:2" />  
   <polyline id='mypolargraph' points="0,40 40,40 40,80 80,80 80,120 120,120 120,160"  style="fill:white;stroke:red;stroke-width:4" />
   <circle cx="250" cy="250" r="40" stroke="orange" stroke-width="1" fill="yellow" />
 </svg>

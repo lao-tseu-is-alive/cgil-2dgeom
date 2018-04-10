@@ -9,15 +9,15 @@
 module.exports = {
   entry: './src/index.js',
   filename: {
-    js: 'cgil2dgeom.min.js'
+    js: 'geom2d.min.js'
   },
   // https://poi.js.org/#/options?id=library
-  library: 'cggeom',
+  library: 'geom2d',
   sourceMap: true,
   html: false,
   // https://poi.js.org/#/recipes/cjs-and-umd-format
   format: 'umd',
-  moduleName: 'cggeom',
+  moduleName: 'geom2d',
   babel: {
     babelrc: true,
     cacheDirectory: true,
