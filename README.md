@@ -1,4 +1,4 @@
-# cgil-2dgeom
+# cgil-geom2d
 a very light 2d geometry utility classes like Point, Line etc..
 
 [![Build Status](https://travis-ci.org/lao-tseu-is-alive/cgil-2dgeom.png?branch=master)](https://travis-ci.org/lao-tseu-is-alive/cgil-2dgeom)
@@ -6,9 +6,34 @@ a very light 2d geometry utility classes like Point, Line etc..
 [![Coverage Status](https://coveralls.io/repos/github/lao-tseu-is-alive/cgil-2dgeom/badge.svg?branch=master)](https://coveralls.io/github/lao-tseu-is-alive/cgil-2dgeom?branch=master)
 [![HitCount](http://hits.dwyl.io/lao-tseu-is-alive/cgil-2dgeom.svg)](http://hits.dwyl.io/lao-tseu-is-alive/cgil-2dgeom)
 
-is licensed under the terms of the MIT License.
+this code is licensed under the terms of the MIT License.
 
-## Installation
+## Using it inside the browser
+you can download the UMD library [file dist/geom2d.min.js](https://raw.githubusercontent.com/lao-tseu-is-alive/cgil-2dgeom/master/dist/geom2d.min.js)
+directy to your computer 
+then you just need to include it as usual (adapting the path to your case):
+```html
+<script src="dist/geom2d.min.js"></script>
+```
+you can see an example above 
+
+you can get a nice explanation for the various library formats in [this medium article](https://medium.com/computed-comparisons/commonjs-vs-amd-vs-requirejs-vs-es6-modules-2e814b114a0b)
+
+but very basically 
+ - cjs (commonjs2): You will use this format in a build tool, it excludes all modules in node_modules folder from bundled files.
+ - umd: You will use this format directly in browser, all 3rd-party packages (dependencies) will be bundled within.
+
+
+## Installation with npm
+
+Inside an already created npm project directory (do you have a package.json in it ?) 
+you can as usual install `cgil-geom2d` in the shell with :
+
+```bash
+npm install cgil-geom2d --save
+```
+
+then you can import/require the CommonJS bundle in **dist/geom2d.cjs.js** 
 
 
 ## Example
@@ -18,7 +43,7 @@ let's use the library Point class to create a nice 12 petal's flowers using a po
 [Jump to the full example file](https://lao-tseu-is-alive.github.io/cgil-2dgeom/docs/example_UMD.html)
 
 ```html
-<script src="../dist/cgil2dgeom.min.js"></script>
+<script src="../dist/geom2d.min.js"></script>
 <svg height="500" width="500">
   <line  id='xaxis' x1="250" y1="0" x2="250" y2="500" style="stroke:rgb(255,255,255);stroke-width:2" />
   <line  id='yaxis' x1="0" y1="250" x2="500" y2="250" style="stroke:rgb(255,255,255);stroke-width:2" />  
@@ -48,9 +73,15 @@ let's use the library Point class to create a nice 12 petal's flowers using a po
   ElPolyPolarGraph.setAttribute('points', coordinatesString)  
 ```
 
-Using Jest
-https://codecov.io
+
+
 [Travis CI](https://travis-ci.org/lao-tseu-is-alive/cgil-2dgeom/)
+
+## Develop 
+you can clone this repository as usual
+and use the various scripts inside package.json to help you
+
+ 
 
 # run unit tests with
 
@@ -58,3 +89,7 @@ https://codecov.io
 npx jest -i --watch
 ```
 
+or just
+```bash
+npm run test
+```
