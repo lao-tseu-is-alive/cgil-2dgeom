@@ -12,12 +12,12 @@ module.exports = {
     js: 'cgil2dgeom.min.js'
   },
   // https://poi.js.org/#/options?id=library
-  library: 'cgil2dgeom',
+  library: 'cggeom',
   sourceMap: true,
   html: false,
   // https://poi.js.org/#/recipes/cjs-and-umd-format
   format: 'umd',
-  moduleName: 'cgil2dgeom',
+  moduleName: 'cggeom',
   babel: {
     babelrc: true,
     cacheDirectory: true,

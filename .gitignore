@@ -61,4 +61,4 @@ typings/
 .idea
 
 # remove dist folder
-dist
+# dist
