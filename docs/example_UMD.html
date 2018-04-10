@@ -47,11 +47,11 @@
   let L1 = new cggeom.Line(P0, P1)
   log('L1 : ' + L1.toString())
   
-  let ElPolyPolarGraph = document.getElementById('mypolargraph')
   function log(msg) {
     ElCode.innerHTML += '<br>' + msg
     console.log(msg)
   }
+  let ElPolyPolarGraph = document.getElementById('mypolargraph')
   let petalLength = 200
   let coordinatesString = '' // to accumulate the points coordinates
   // let's center the drawing on the svg
