@@ -74,16 +74,14 @@ let's use the library Point class to create a nice 12 petal's flowers using a po
 ```
 
 
+## Develop 
+you can clone this repository with a git clone
+then run a npm install in the cloned directory  
+and use the various scripts inside package.json to help you work
 
 [Travis CI](https://travis-ci.org/lao-tseu-is-alive/cgil-2dgeom/)
 
-## Develop 
-you can clone this repository as usual
-and use the various scripts inside package.json to help you
-
- 
-
-# run unit tests with
+### run unit tests with
 
 ```bash
 npx jest -i --watch
@@ -93,3 +91,10 @@ or just
 ```bash
 npm run test
 ```
+
+### run eslint with
+
+```bash
+npm run lint
+```
+
