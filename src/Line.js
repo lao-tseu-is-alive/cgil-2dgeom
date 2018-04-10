@@ -18,12 +18,9 @@ export default class Line {
    */
   constructor (startPoint = new Point(), endPoint = new Point(1, 1), params = null) {
     this._options = Object.assign({}, lineDefaultOptions, params)
-    // using property setters above
+    // using property setters above to check for valid values
     this.startPoint = startPoint
     this.endPoint = endPoint
-    if (endPoint.equal(startPoint)) {
-      throw new TypeError(`Class Line needs a endPoint different from startPoint: ${endPoint.toString()} == ${startPoint.toString()}`)
-    }
   }
 
   /**

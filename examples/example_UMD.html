@@ -3,17 +3,19 @@
 <head>
   <meta charset="UTF-8">
   <title>Testing cgil-2dgeom with UMD library</title>
-  <script src="../dist/cgil2dgeom.min.js"></script>
+   <script src="../dist/cgil2dgeom.min.js"></script>
   <style>
     html{
       font-family: Arial, Helvetica;
       font-size: 1.2rem;
+      margin: 2rem;
     }
     #cgcode {
+      display: block;
       background: #000066;
       color: rgba(121, 245, 20, 0.91);
       border: solid 1px;
-      padding: 1em;
+      padding: 1rem;
     }
     svg {
       background-color: #333333;
@@ -25,8 +27,8 @@
 <p>This page is to test usage of the UMD version of the library in the browser 
   <a href="https://poi.js.org/#/recipes/cjs-and-umd-format">(more info on library formats are available here in the POI web...)</a></p>
 
-<pre id="cgcode"></pre>
-<p>Now let's create a nice 12 petal's flowers using a polar equation : <strong>r = a sin 6θ </strong></p>
+<code id="cgcode"></code>
+<p>Now let's create a nice 12 petal's flowers using a polar equation :<br> <strong>r = a sin 6θ </strong></p>
 <svg height="500" width="500">
   <line  id='xaxis' x1="250" y1="0" x2="250" y2="500" style="stroke:rgb(255,255,255);stroke-width:2" />
   <line  id='yaxis' x1="0" y1="250" x2="500" y2="250" style="stroke:rgb(255,255,255);stroke-width:2" />
@@ -39,7 +41,7 @@
 <script type="application/javascript">
   let ElCode = document.getElementById('cgcode')
   let P0 = new cggeom.Point()
-  log('P0 = new cggeom.Point() will give  a P0 : ' + P0.toString())
+  log('P0 = new cggeom.Point() will give P0 : ' + P0.toString())
   let P1 = new cggeom.Point(1,2)
   log('P1 = new cggeom.Point(1,2)  ==> P1 : ' + P1.toString())
   let L1 = new cggeom.Line(P0, P1)
@@ -63,7 +65,7 @@
     let TempPoint = cggeom.Point.fromPolar(radius, angle)
     // and move the point so it's centered
     TempPoint.moveRel(offsetX,offsetY)
-    coordinatesString += TempPoint.toStr(',', false)  + ' '
+    coordinatesString += TempPoint.toString(',', false)  + ' '
     // log(`angle : ${angle}, radius ${radius} : ${TempPoint.toString(',')}`)
   }
   // log('coordinates :' + coordinatesString)

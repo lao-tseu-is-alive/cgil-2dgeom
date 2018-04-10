@@ -117,19 +117,12 @@ export default class Point {
   /**
    * give a string representation of this class instance
    * @param {string} separator placed between x and y values ', ' by default
+   * @param {boolean} surroundingParenthesis allow to tell if result string should be surrounded with parenthesis (True by default)
+   * @param {number} precision defines the number of decimals for the coordinates (2 by default)
    * @returns {string}
    */
-  toString (separator = ',') {
-    return `(${this.x}${separator} ${this.y})`
-  }
-
-  /**
-   * give a string representation of this class instance
-   * @param {string} separator placed between x and y values ', ' by default
-   * @returns {string}
-   */
-  toStr (separator = ',', enclosingInParenthesis = true, precision = 2) {
-    if (enclosingInParenthesis) {
+  toString (separator = ',', surroundingParenthesis = true, precision = 2) {
+    if (surroundingParenthesis) {
       return `(${roundNumber(this.x, precision)}${separator} ${roundNumber(this.y, 2)})`
     } else {
       return `${roundNumber(this.x, precision)}${separator} ${roundNumber(this.y, 2)}`

@@ -141,10 +141,13 @@ describe('Point.js module', () => {
       expect(P1.equal(new Point(5.3, 2.1))).toEqual(true)
     })
   })
-  
+
   describe('Point.toString()', () => {
     test('should return a correct string representation', () => {
       expect(P1.toString()).toEqual(`(${1.0}, ${2.0})`)
+    })
+    test('should return a string  wthitout parenthesis when surroundingParenthesis is false', () => {
+      expect(P1.toString(',', false)).toEqual(`${1.0}, ${2.0}`)
     })
   })
 
