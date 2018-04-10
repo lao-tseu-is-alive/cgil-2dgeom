@@ -42,6 +42,8 @@ let's use the library Point class to create a nice 12 petal's flowers using a po
 
 [Jump to the full example file](https://lao-tseu-is-alive.github.io/cgil-2dgeom/docs/example_UMD.html)
 
+![alt text](https://raw.githubusercontent.com/lao-tseu-is-alive/cgil-2dgeom/master/docs/images/cgil-geom2d_12_petals_flower_example.png "Using the geom2d.Point class to create a nice 12 petal's flowers from a polar equation")
+
 ```html
 <script src="../dist/geom2d.min.js"></script>
 <svg height="500" width="500">
@@ -61,18 +63,17 @@ let's use the library Point class to create a nice 12 petal's flowers using a po
   const offsetY = 250
   // let's iterate over a full 360 degree circle
   for (let angle = 0; angle < 360; angle += 2) {
-    // let's draw a 12 petals polar equation : https://faculty.math.illinois.edu/~rasekh2/math231(s2016)/PolarEquations.pdf
-    let radius = petalLength * Math.sin(6 * cggeom.utils.getRadians(angle)) // need to convert to radians for Math.sin
-    // create the point with the cggeom class
-    let TempPoint = cggeom.Point.fromPolar(radius, angle)
-    // and move the point so it's centered
-    TempPoint.moveRel(offsetX,offsetY)
-    coordinatesString += TempPoint.toString(',', false)  + ' '    
+        let radius = petalLength * Math.sin(6 * geom2d.utils.getRadians(angle)) // need to convert to radians for Math.sin        
+        let TempPoint = geom2d.Point.fromPolar(radius, angle)
+        // move the point so it's centered on the svg 
+        TempPoint.moveRel(offsetX,offsetY)
+        coordinatesString += TempPoint.toString(',', false)  + ' '
   }  
   // now update the points attributes in the existing svg polyline to display the flower on screen
   ElPolyPolarGraph.setAttribute('points', coordinatesString)  
 ```
-
+ 
+ [You can find other polar equations here](https://faculty.math.illinois.edu/~rasekh2/math231(s2016)/PolarEquations.pdf)
 
 ## Develop 
 you can clone this repository with a git clone
