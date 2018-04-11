@@ -49,10 +49,10 @@ let's use the library Point class to create a nice 12 petal's flowers using a po
 ```html
 <script src="../dist/geom2d.min.js"></script>
 <svg height="500" width="500">
-  <line  id='xaxis' x1="250" y1="0" x2="250" y2="500" style="stroke:rgb(255,255,255);stroke-width:2" />
-  <line  id='yaxis' x1="0" y1="250" x2="500" y2="250" style="stroke:rgb(255,255,255);stroke-width:2" />  
-  <polyline id='mypolargraph' points="0,40 40,40 40,80 80,80 80,120 120,120 120,160"  style="fill:white;stroke:red;stroke-width:4" />
-  <circle cx="250" cy="250" r="40" stroke="orange" stroke-width="1" fill="yellow" />
+  <line  id='xaxis' x1="250" y1="0" x2="250" y2="500" class="svgaxis" />
+  <line  id='yaxis' x1="0" y1="250" x2="500" y2="250" class="svgaxis" />
+  <polyline id='mypolargraph' points="0,40 40,40 40,80 80,80 " class="svg-flower-petal"/>
+  <circle cx="250" cy="250" r="40" class="svg-flower-center" />
 </svg>
 ```
 
@@ -84,7 +84,19 @@ and use the various scripts inside package.json to help you work
 
 [Travis CI](https://travis-ci.org/lao-tseu-is-alive/cgil-2dgeom/)
 
-### run unit tests with
+### create the CommonJS bundle in dist folder
+
+```bash
+npm run build:CJS
+```
+
+### create the UMD bundle in dist folder
+
+```bash
+npm run build:UMD
+```
+
+### run unit tests with jest
 
 ```bash
 npx jest -i --watch
