@@ -89,7 +89,7 @@ describe('Line.js module', () => {
       expect(L2)
         .toHaveProperty('endPoint', P1)
     })
-    test('should throw an error if startPoint is not of type Point', () => {
+    test('should throw an error if endPoint is not of type Point', () => {
       expect(function () {
         const LineWrong = new Line(P1, [1, 0])
       }).toThrow('endPoint setter needs parameter otherPoint of type Point')

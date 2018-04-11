@@ -1,0 +1,48 @@
+{
+  "coverage": "64%",
+  "expectCount": 50,
+  "actualCount": 32,
+  "files": {
+    "src/Line.js": {
+      "expectCount": 12,
+      "actualCount": 7,
+      "undocumentLines": [
+        4,
+        12,
+        20,
+        47,
+        76
+      ]
+    },
+    "src/Point.js": {
+      "expectCount": 27,
+      "actualCount": 23,
+      "undocumentLines": [
+        82,
+        85,
+        86,
+        106
+      ]
+    },
+    "src/ccw.js": {
+      "expectCount": 1,
+      "actualCount": 1,
+      "undocumentLines": []
+    },
+    "src/utils.js": {
+      "expectCount": 10,
+      "actualCount": 1,
+      "undocumentLines": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        20,
+        21,
+        22,
+        38
+      ]
+    }
+  }
+}

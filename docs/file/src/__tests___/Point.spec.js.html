@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../">
+  <title data-ice="title">src/__tests___/Point.spec.js | cgil-geom2d</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="2d geometry ES6 javascript classes like Point Lines with polar coordinates conversions.."><meta property="twitter:card" content="summary"><meta property="twitter:title" content="cgil-geom2d"><meta property="twitter:description" content="2d geometry ES6 javascript classes like Point Lines with polar coordinates conversions.."></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/lao-tseu-is-alive/cgil-2dgeom.git"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Line.js~Line.html">Line</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Point.js~Point.html">Point</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-ccw">ccw</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-fixDec">fixDec</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getDegrees">getDegrees</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getGradians">getGradians</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getRadians">getRadians</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-isNumeric">isNumeric</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-roundNumber">roundNumber</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-AngularSystem">AngularSystem</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-DIGITIZE_PRECISION">DIGITIZE_PRECISION</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-EPSILON">EPSILON</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-PRECISION">PRECISION</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/__tests___/Point.spec.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">// noinspection NpmUsedModulesInstalled
+/* eslint-disable no-unused-expressions */
+import Point from &apos;../Point&apos;
+import {AngularSystem} from &apos;../utils&apos;
+
+// noinspection Annotator
+describe(&apos;Point.js module&apos;, () =&gt; {
+  const P0 = new Point()
+  const P1 = new Point(1.0, 2.0)
+  describe(&apos;Point constructor&apos;, () =&gt; {
+    test(
+      &apos;constructor with default parameters should return an instance of Point&apos;,
+      () =&gt; {
+        expect(P0).toBeInstanceOf(Point)
+      }
+    )
+    test(&apos;constructor with default parameters should have x = 0&apos;, () =&gt; {
+      expect(P0).toHaveProperty(&apos;x&apos;, 0)
+    })
+    test(&apos;constructor with default parameters should return y = 0&apos;, () =&gt; {
+      expect(P0).toHaveProperty(&apos;y&apos;, 0)
+    })
+    const P1 = new Point(1.0, 2.0)
+    test(&apos;new Point(1.0, 2.0) should return an instance of Point&apos;, () =&gt; {
+      expect(P1).toBeInstanceOf(Point)
+    })
+    test(
+      &apos;should allow new Point(&quot;1.12345689&quot;) with a x as string number and y=0 implicit&apos;,
+      () =&gt; {
+        // noinspection JSCheckFunctionSignatures
+        const P3 = new Point(&apos;1.12345689&apos;) // y=0 implicitly
+        expect(P3).toHaveProperty(&apos;x&apos;, 1.12345689)
+        expect(P3).toHaveProperty(&apos;y&apos;, 0)
+      }
+    )
+
+    test(&apos;should allow to set y to a valid string number value correctly&apos;, () =&gt; {
+      // noinspection JSCheckFunctionSignatures
+      const P3 = new Point(&apos;1.12345689&apos;) // y=0 implicitly
+      P3.y = &apos;-1.123456789&apos;
+      expect(P3).toHaveProperty(&apos;y&apos;, -1.123456789)
+    })
+    test(
+      &apos;should allow to construct a new Point from an array of 2 numbers &apos;,
+      () =&gt; {
+        try {
+          // noinspection JSCheckFunctionSignatures
+          const PointFromArray = new Point([1.0, 2.0])
+          expect(PointFromArray).toHaveProperty(&apos;x&apos;, 1.0)
+          expect(PointFromArray).toHaveProperty(&apos;y&apos;, 2.0)
+        } catch (e) {
+          console.log(&apos;## ERROR trying to construct new Point([1.0, 2.0])&apos;)
+        }
+      }
+    )
+  })
+
+  describe(&apos;Point x,y accessors &apos;, () =&gt; {
+    test(&apos;should give back x value correctly&apos;, () =&gt; {
+      expect(P1).toHaveProperty(&apos;x&apos;, 1.0)
+    })
+    test(&apos;should give back y value correctly&apos;, () =&gt; {
+      expect(P1).toHaveProperty(&apos;y&apos;, 2.0)
+    })
+    const P2 = new Point()
+    P2.x = 3.0
+    P2.y = 4.0
+    test(&apos;should allow to set x value correctly&apos;, () =&gt; {
+      expect(P2).toHaveProperty(&apos;x&apos;, 3.0)
+    })
+    test(&apos;should allow to set y value correctly&apos;, () =&gt; {
+      expect(P2).toHaveProperty(&apos;y&apos;, 4.0)
+    })
+  })
+
+  describe(&apos;Point refuses wrong values for x and y&apos;, () =&gt; {
+    let PWrong = new Point()
+    const badX = &apos;l25&apos; // this is not a numeric value
+    const badY = &apos;one&apos;
+    test(&apos;should throw an Error if invalid point x coordinate is given &apos;, () =&gt; {
+      expect(function () {
+        const PointWithXWrong = new Point()
+        PointWithXWrong.x = badX
+      }).toThrow(&apos;Point.x setter needs a numeric value&apos;)
+    })
+    try {
+      PWrong.y = badY
+    } catch (e) {
+      // console.log(`PWrong.y = ${badY} throws `, e)
+    }
+    test(
+      &apos;should set Point.isInvalid to true when given incorrect x or y value &apos;, () =&gt; {
+        expect(PWrong).toHaveProperty(&apos;isInvalid&apos;, true)
+      })
+    test(
+      &apos;should set Point.InvalidReason to string when given incorrect x or y value &apos;,
+      () =&gt; {
+        expect(PWrong).toHaveProperty(&apos;InvalidReason&apos;, `cannot set y to ${badY} because it is not a numeric value`)
+      }
+    )
+    test(&apos;should set X to NaN when given incorrect x value &apos;, () =&gt; {
+      try {
+        PWrong.x = badX
+      } catch (e) {
+        // to allow doing this test without throwing the error
+      }
+      expect(PWrong.x).toBe(NaN)
+    })
+    test(&apos;should set Y to NaN when given incorrect x value &apos;, () =&gt; {
+      expect(PWrong.y).toBe(NaN)
+    })
+  })
+
+  describe(&apos;Point.fromPolar(radius, theta)&apos;, () =&gt; {
+    test(&apos;should throw an Error when no parameters are passed&apos;, () =&gt; {
+      expect(Point.fromPolar.bind(undefined, [])).toThrow(TypeError, &apos;fromPolar needs radius and theta to be valid numbers !&apos;)
+    })
+    test(&apos;should give a Point(0,0) when radius=0&apos;, () =&gt; {
+      const P1 = Point.fromPolar(0, 45)
+      expect(P1.equal(new Point())).toEqual(true)
+    })
+    test(
+      &apos;should give a Point(0,5) when radius=5 and theta=Pi/2 radians&apos;,
+      () =&gt; {
+        const P1 = Point.fromPolar(5, Math.PI / 2, AngularSystem.RADIAN)
+        expect(P1.equal(new Point(0, 5))).toEqual(true)
+      }
+    )
+  })
+
+  describe(&apos;Point.fromPoint(otherPoint)&apos;, () =&gt; {
+    test(&apos;should throw an Error when parameter is not a valid Point&apos;, () =&gt; {
+      expect(Point.fromPoint.bind(undefined, [])).toThrow(TypeError, &apos;fromPoint needs parameter otherPoint of type Point&apos;)
+    })
+    test(&apos;should give a Point(0,0) when given new Point()&apos;, () =&gt; {
+      const P1 = Point.fromPoint(new Point())
+      expect(P1.equal(new Point())).toEqual(true)
+    })
+    test(&apos;should copy x,y values in the new point&apos;, () =&gt; {
+      const P1 = new Point(5.3, 2.1)
+      expect(P1.equal(new Point(5.3, 2.1))).toEqual(true)
+    })
+  })
+
+  describe(&apos;Point.toString()&apos;, () =&gt; {
+    test(&apos;should return a correct string representation&apos;, () =&gt; {
+      expect(P1.toString()).toEqual(`(${1.0}, ${2.0})`)
+    })
+    test(&apos;should return a string  without parenthesis when surroundingParenthesis is false&apos;, () =&gt; {
+      expect(P1.toString(&apos;,&apos;, false)).toEqual(`${1.0}, ${2.0}`)
+    })
+  })
+
+  describe(&apos;Point.toArray allows to get back array [x,y]&apos;, () =&gt; {
+    const arrPoint = P1.toArray()
+    test(&apos;should return an array&apos;, () =&gt; {
+      expect(arrPoint).toBeInstanceOf(Array)
+    })
+    test(&apos;should copy the x value correctly in the array&apos;, () =&gt; {
+      expect(arrPoint[0]).toEqual(1.0)
+    })
+    test(&apos;should copy the y value correctly in the array&apos;, () =&gt; {
+      expect(arrPoint[1]).toEqual(2.0)
+    })
+  })
+
+  describe(&apos;Point can be exported to OGC and Postgis&apos;, () =&gt; {
+    test(
+      &apos;toWKT should return a correct OGC Well-known text (WKT) representation&apos;,
+      () =&gt; {
+        expect(P1.toWKT()).toEqual(`POINT(${P1.x} ${P1.y})`)
+      }
+    )
+    test(
+      &apos;toEWKT should return a correct Postgis Extended Well-known text (EWKT) representation&apos;,
+      () =&gt; {
+        const srid = 21781
+        expect(P1.toEWKT()).toEqual(`SRID=${srid};POINT(${P1.x} ${P1.y})`)
+      }
+    )
+    test(
+      &apos;toGeoJSON should return a correct GeoJSON (http://geojson.org/) representation&apos;,
+      () =&gt; {
+        expect(P1.toGeoJSON()).toEqual(`{&quot;type&quot;:&quot;Point&quot;,&quot;coordinates&quot;:[${P1.x},${P1.y}]}`)
+      }
+    )
+  })
+
+  describe(&apos;Point.js equals equality operator&apos;, () =&gt; {
+    const P1bis = new Point(1, 2)
+    const P2 = new Point(2, 1)
+    test(
+      &apos;should throw an error when equals(otherPoint) with otherPoint is not an instance of Point&apos;,
+      () =&gt; {
+        expect(P1.equal.bind(P1, [1.0, 2.0])).toThrow(TypeError, &apos;A Point can only be compared to another Point&apos;)
+      }
+    )
+    test(
+      &apos;should return true when comparing two Points with default constructor&apos;,
+      () =&gt; {
+        const P0 = new Point()
+        const P0bis = new Point()
+        expect(P0.equal(P0bis)).toEqual(true)
+      }
+    )
+    test(
+      &apos;should return true when comparing two Points that have identical values&apos;,
+      () =&gt; {
+        expect(P1.equal(P1bis)).toEqual(true)
+      }
+    )
+    test(
+      &apos;should return true when comparing two Points that have nearly identical values&apos;,
+      () =&gt; {
+        const P0 = new Point(2, 3)
+        // Math.sqrt(2) * Math.sqrt(2) should give 2 but gives instead 2.0000000000000004
+        // Math.sqrt(3) * Math.sqrt(3) should give 2 but gives instead 2.9999999999999996
+        // Point Class equality should test near equality with EPSILON
+        const P0FloatError = new Point((Math.sqrt(2) * Math.sqrt(2)), Math.sqrt(3) * Math.sqrt(3))
+        expect(P0.equal(P0FloatError)).toEqual(true)
+      }
+    )
+    test(
+      &apos;should return false when comparing two Points that have identical values&apos;,
+      () =&gt; {
+        expect(P1.equal(P2)).toEqual(false)
+      }
+    )
+  })
+
+  describe(&apos;Point can be moved&apos;, () =&gt; {
+    test(
+      &apos;moveToArray should throw a TypeError when parameters are not numbers&apos;,
+      () =&gt; {
+        expect(P0.moveToArray.bind(P0, [&apos;a&apos;, 1])).toThrow(TypeError, &apos;moveToArray needs an array of 2 numbers like this [1.0, 2.0]&apos;)
+      }
+    )
+    test(&apos;moveToArray should move correctly x and y&apos;, () =&gt; {
+      expect(P0.moveToArray([1.0, 2.0]).equal(P1)).toEqual(true)
+    })
+    test(&apos;moveTo should throw a TypeError when parameters are not numbers&apos;, () =&gt; {
+      expect(P0.moveTo.bind(P0, [&apos;x&apos;, 1])).toThrow(TypeError, &apos;moveTo needs newX and newY to be valid numbers !&apos;)
+    })
+    test(&apos;moveTo should move correctly x and y&apos;, () =&gt; {
+      expect(P0.moveTo(1.0, 2.0).equal(P1)).toEqual(true)
+    })
+    test(
+      &apos;moveRelArray should throw a TypeError when parameters are not numbers&apos;,
+      () =&gt; {
+        expect(P0.moveRelArray.bind(P0, [&apos;a&apos;, 1])).toThrow(TypeError, &apos;moveRelArray needs an array of 2 numbers like this [1.0, 2.0]&apos;)
+      }
+    )
+    test(&apos;moveRelArray should move x and y by the vector displacement&apos;, () =&gt; {
+      const P0 = new Point(1.0, 1.0)
+      const P1 = new Point(2.0, 3.0)
+      expect(P0.moveRelArray([1.0, 2.0]).equal(P1)).toEqual(true)
+    })
+    test(
+      &apos;moveRel should throw a TypeError when parameters are not numbers&apos;,
+      () =&gt; {
+        expect(P0.moveRel.bind(P0, [&apos;a&apos;, 1])).toThrow(TypeError, &apos;moveRel needs deltaX and deltaY to be valid numbers !&apos;)
+      }
+    )
+    test(&apos;moveRel should move correctly x and y&apos;, () =&gt; {
+      const P0 = new Point(1.0, 1.0)
+      const P1 = new Point(2.0, 3.0)
+      expect(P0.moveRel(1.0, 2.0).equal(P1)).toEqual(true)
+    })
+    test(
+      &apos;moveRelPolar should throw a TypeError when parameters are not numbers&apos;,
+      () =&gt; {
+        expect(P0.moveRelPolar.bind(P0, [&apos;a&apos;, 1])).toThrow(TypeError, &apos;fromPolar needs radius and theta to be valid numbers !&apos;)
+      }
+    )
+    test(&apos;moveRelPolar should move correctly x and y&apos;, () =&gt; {
+      const P0 = new Point(1.0, 0.0)
+      const P1 = new Point(1.0, 3.0)
+      expect(P0.moveRelPolar(3.0, 90).equal(P1)).toEqual(true)
+    })
+  })
+
+  describe(&apos;Point can be copied&apos;, () =&gt; {
+    test(
+      &apos;copyRelArray should throw a TypeError when parameters are not numbers&apos;,
+      () =&gt; {
+        expect(P0.copyRelArray.bind(P0, [&apos;a&apos;, 1])).toThrow(TypeError, &apos;copyRelArray needs an array of 2 numbers like this [1.0, 2.0]&apos;)
+      }
+    )
+    test(&apos;copyRelArray should return an instance of Point&apos;, () =&gt; {
+      expect(P0.copyRelArray([1.0, 2.0])).toBeInstanceOf(Point)
+    })
+    test(&apos;copyRelArray should move x and y by the vector displacement&apos;, () =&gt; {
+      const P0 = new Point(1.0, 1.0)
+      const P1 = new Point(2.0, 3.0)
+      expect(P0.copyRelArray([1.0, 2.0]).equal(P1)).toEqual(true)
+    })
+
+    test(
+      &apos;copyRel should throw a TypeError when parameters are not numbers&apos;,
+      () =&gt; {
+        expect(P0.copyRel.bind(P0, [&apos;a&apos;, 1])).toThrow(TypeError, &apos;copyRel needs deltaX and deltaY to be valid numbers !&apos;)
+      }
+    )
+    test(&apos;copyRel should return an instance of Point&apos;, () =&gt; {
+      expect(P0.copyRel(1.0, 2.0)).toBeInstanceOf(Point)
+    })
+    test(&apos;copyRel should move correctly x and y&apos;, () =&gt; {
+      const P0 = new Point(1.0, 1.0)
+      const P1 = new Point(2.0, 3.0)
+      expect(P0.copyRel(1.0, 2.0).equal(P1)).toEqual(true)
+    })
+
+    test(
+      &apos;copyRelPolar should throw a TypeError when parameters are not numbers&apos;,
+      () =&gt; {
+        expect(P0.copyRelPolar.bind(P0, [&apos;a&apos;, 1])).toThrow(TypeError, &apos;fromPolar needs radius and theta to be valid numbers !&apos;)
+      }
+    )
+    test(&apos;copyRelPolar should return an instance of Point&apos;, () =&gt; {
+      expect(P0.copyRelPolar(1.0, 2.0)).toBeInstanceOf(Point)
+    })
+    test(&apos;copyRelPolar should copy correctly x and y&apos;, () =&gt; {
+      const P0 = new Point(1.0, 0.0)
+      const P1 = new Point(1.0, 3.0)
+      expect(P0.copyRelPolar(3.0, 90).equal(P1)).toEqual(true)
+    })
+  })
+
+  describe(&apos;Point.js distance method &apos;, () =&gt; {
+    const P1bis = new Point(1, 2)
+    test(
+      &apos;should throw an error when distance(otherPoint) with otherPoint is not an instance of Point&apos;,
+      () =&gt; {
+        expect(P1.distance.bind(P1, [1.0, 2.0])).toThrow(TypeError, &apos;Point.distance(otherPoint) expects a Point as parameter&apos;)
+      }
+    )
+    test(
+      &apos;should return zero when getting distance from two Points with default constructor&apos;,
+      () =&gt; {
+        const P0 = new Point()
+        const P0bis = new Point()
+        expect(P0.distance(P0bis)).toEqual(0)
+      }
+    )
+    test(
+      &apos;should return zero when getting distance from two Points that have identical values&apos;,
+      () =&gt; {
+        expect(P1.distance(P1bis)).toEqual(0)
+      }
+    )
+    test(
+      &apos;should return zero when getting distance from two Points that have nearly identical values&apos;,
+      () =&gt; {
+        const P0 = new Point(2, 3)
+        // Math.sqrt(2) * Math.sqrt(2) should give 2 but gives instead 2.0000000000000004
+        // Math.sqrt(3) * Math.sqrt(3) should give 3 but gives instead 2.9999999999999996
+        // Point Class equality should test near equality with EPSILON
+        const P0FloatError = new Point((Math.sqrt(2) * Math.sqrt(2)), Math.sqrt(3) * Math.sqrt(3))
+        expect(P0.distance(P0FloatError)).toEqual(0)
+      }
+    )
+    test(
+      &apos;should return 5 when getting distance from two Points that have identical values&apos;,
+      () =&gt; {
+        const Pa = new Point(1, 1)
+        const Pb = new Point(5, 4) // sqrt((4&#xB2;)+(3&#xB2;)) = sqrt(16 + 9) = sqrt(25) = 5
+        expect(Pa.distance(Pb)).toEqual(5)
+      }
+    )
+  })
+})
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.0.4)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

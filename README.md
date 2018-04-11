@@ -40,9 +40,9 @@ then you can import/require the CommonJS bundle in **dist/geom2d.cjs.js**
 let's use the library Point class to create a nice 12 petal's flowers using a polar equation like this : 
 **r = a sin 6θ**
 
-[Jump to the full example file](https://lao-tseu-is-alive.github.io/cgil-2dgeom/docs/example_UMD.html)
+[Jump to the full example file](https://lao-tseu-is-alive.github.io/cgil-2dgeom/examples/example_UMD.html)
 
-![alt text](https://raw.githubusercontent.com/lao-tseu-is-alive/cgil-2dgeom/master/docs/images/cgil-geom2d_12_petals_flower_example.png "Using the geom2d.Point class to create a nice 12 petal's flowers from a polar equation")
+![alt text](https://raw.githubusercontent.com/lao-tseu-is-alive/cgil-2dgeom/master/examples/images/cgil-geom2d_12_petals_flower_example.png "Using the geom2d.Point class to create a nice 12 petal's flowers from a polar equation")
 
 ```html
 <script src="../dist/geom2d.min.js"></script>

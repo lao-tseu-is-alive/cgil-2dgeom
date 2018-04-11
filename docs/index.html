@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl">
+  <title data-ice="title">Home | cgil-geom2d</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="2d geometry ES6 javascript classes like Point Lines with polar coordinates conversions.."><meta property="twitter:card" content="summary"><meta property="twitter:title" content="cgil-geom2d"><meta property="twitter:description" content="2d geometry ES6 javascript classes like Point Lines with polar coordinates conversions.."></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/lao-tseu-is-alive/cgil-2dgeom.git"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Line.js~Line.html">Line</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Point.js~Point.html">Point</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-ccw">ccw</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-fixDec">fixDec</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getDegrees">getDegrees</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getGradians">getGradians</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getRadians">getRadians</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-isNumeric">isNumeric</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-roundNumber">roundNumber</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-AngularSystem">AngularSystem</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-DIGITIZE_PRECISION">DIGITIZE_PRECISION</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-EPSILON">EPSILON</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-PRECISION">PRECISION</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><div data-ice="index" class="github-markdown"><h1 id="cgil-geom2d">cgil-geom2d</h1><p>a light 2d geometry utility classes like Point, Line written in ES6 Javascript (~12k for the CommonJS lib).</p>
+<p><a href="https://travis-ci.org/lao-tseu-is-alive/cgil-2dgeom"><img src="https://travis-ci.org/lao-tseu-is-alive/cgil-2dgeom.png?branch=master" alt="Build Status"></a>
+<a href="https://codecov.io/gh/lao-tseu-is-alive/cgil-2dgeom"><img src="https://img.shields.io/codecov/c/github/lao-tseu-is-alive/cgil-2dgeom/master.svg" alt="Coverage"></a>
+<a href="https://coveralls.io/github/lao-tseu-is-alive/cgil-2dgeom?branch=master"><img src="https://coveralls.io/repos/github/lao-tseu-is-alive/cgil-2dgeom/badge.svg?branch=master" alt="Coverage Status"></a>
+<a href="http://hits.dwyl.io/lao-tseu-is-alive/cgil-2dgeom"><img src="http://hits.dwyl.io/lao-tseu-is-alive/cgil-2dgeom.svg" alt="HitCount"></a></p>
+<p>this code is licensed under the terms of the MIT License.</p>
+<h2 id="using-it-inside-the-browser">Using it inside the browser</h2><p>you can download the UMD library <a href="https://raw.githubusercontent.com/lao-tseu-is-alive/cgil-2dgeom/master/dist/geom2d.min.js">file dist/geom2d.min.js</a>
+directy to your computer 
+then you just need to include it as usual (adapting the path to your case):</p>
+<pre><code class="lang-html"><code class="source-code prettyprint">&lt;script src=&quot;dist/geom2d.min.js&quot;&gt;&lt;/script&gt;</code>
+</code></pre>
+<p>you can see an example above </p>
+<p>you can get a nice explanation for the various library formats in <a href="https://medium.com/computed-comparisons/commonjs-vs-amd-vs-requirejs-vs-es6-modules-2e814b114a0b">this medium article</a></p>
+<p>but very basically </p>
+<ul>
+<li>cjs (commonjs2): You will use this format in a build tool, it excludes all modules in node_modules folder from bundled files.</li>
+<li>umd: You will use this format directly in browser, all 3rd-party packages (dependencies) will be bundled within.</li>
+</ul>
+<h2 id="installation-with-npm">Installation with npm</h2><p>Inside an already created npm project directory (do you have a package.json in it ?) 
+you can as usual install <code>cgil-geom2d</code> in the shell with :</p>
+<pre><code class="lang-bash"><code class="source-code prettyprint">npm install cgil-geom2d --save</code>
+</code></pre>
+<p>then you can import/require the CommonJS bundle in <strong>dist/geom2d.cjs.js</strong> </p>
+<h2 id="example">Example</h2><p>let&apos;s use the library Point class to create a nice 12 petal&apos;s flowers using a polar equation like this : 
+<strong>r = a sin 6&#x3B8;</strong></p>
+<p><a href="https://lao-tseu-is-alive.github.io/cgil-2dgeom/docs/example_UMD.html">Jump to the full example file</a></p>
+<p><img src="https://raw.githubusercontent.com/lao-tseu-is-alive/cgil-2dgeom/master/docs/images/cgil-geom2d_12_petals_flower_example.png" alt="alt text" title="Using the geom2d.Point class to create a nice 12 petal&apos;s flowers from a polar equation"></p>
+<pre><code class="lang-html"><code class="source-code prettyprint">&lt;script src=&quot;../dist/geom2d.min.js&quot;&gt;&lt;/script&gt;
+&lt;svg height=&quot;500&quot; width=&quot;500&quot;&gt;
+  &lt;line  id=&apos;xaxis&apos; x1=&quot;250&quot; y1=&quot;0&quot; x2=&quot;250&quot; y2=&quot;500&quot; style=&quot;stroke:rgb(255,255,255);stroke-width:2&quot; /&gt;
+  &lt;line  id=&apos;yaxis&apos; x1=&quot;0&quot; y1=&quot;250&quot; x2=&quot;500&quot; y2=&quot;250&quot; style=&quot;stroke:rgb(255,255,255);stroke-width:2&quot; /&gt;  
+  &lt;polyline id=&apos;mypolargraph&apos; points=&quot;0,40 40,40 40,80 80,80 80,120 120,120 120,160&quot;  style=&quot;fill:white;stroke:red;stroke-width:4&quot; /&gt;
+  &lt;circle cx=&quot;250&quot; cy=&quot;250&quot; r=&quot;40&quot; stroke=&quot;orange&quot; stroke-width=&quot;1&quot; fill=&quot;yellow&quot; /&gt;
+&lt;/svg&gt;</code>
+</code></pre>
+<pre><code class="lang-javascript"><code class="source-code prettyprint">  let ElPolyPolarGraph = document.getElementById(&apos;mypolargraph&apos;)
+  let petalLength = 200
+  let coordinatesString = &apos;&apos; // to accumulate the points coordinates
+  // let&apos;s center the drawing on the svg
+  const offsetX = 250 
+  const offsetY = 250
+  // let&apos;s iterate over a full 360 degree circle
+  for (let angle = 0; angle &lt; 360; angle += 2) {
+        let radius = petalLength * Math.sin(6 * geom2d.utils.getRadians(angle)) // need to convert to radians for Math.sin        
+        let TempPoint = geom2d.Point.fromPolar(radius, angle)
+        // move the point so it&apos;s centered on the svg 
+        TempPoint.moveRel(offsetX,offsetY)
+        coordinatesString += TempPoint.toString(&apos;,&apos;, false)  + &apos; &apos;
+  }  
+  // now update the points attributes in the existing svg polyline to display the flower on screen
+  ElPolyPolarGraph.setAttribute(&apos;points&apos;, coordinatesString)</code>
+</code></pre>
+<p> <a href="https://faculty.math.illinois.edu/~rasekh2/math231(s2016">You can find other polar equations here</a>/PolarEquations.pdf)</p>
+<h2 id="develop">Develop</h2><p>you can clone this repository with a git clone
+then run a npm install in the cloned directory<br>and use the various scripts inside package.json to help you work</p>
+<p><a href="https://travis-ci.org/lao-tseu-is-alive/cgil-2dgeom/">Travis CI</a></p>
+<h3 id="run-unit-tests-with">run unit tests with</h3><pre><code class="lang-bash"><code class="source-code prettyprint">npx jest -i --watch</code>
+</code></pre>
+<p>or just</p>
+<pre><code class="lang-bash"><code class="source-code prettyprint">npm run test</code>
+</code></pre>
+<h3 id="run-eslint-with">run eslint with</h3><pre><code class="lang-bash"><code class="source-code prettyprint">npm run lint</code>
+</code></pre>
+</div>
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.0.4)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

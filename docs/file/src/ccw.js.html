@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../">
+  <title data-ice="title">src/ccw.js | cgil-geom2d</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="2d geometry ES6 javascript classes like Point Lines with polar coordinates conversions.."><meta property="twitter:card" content="summary"><meta property="twitter:title" content="cgil-geom2d"><meta property="twitter:description" content="2d geometry ES6 javascript classes like Point Lines with polar coordinates conversions.."></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/lao-tseu-is-alive/cgil-2dgeom.git"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Line.js~Line.html">Line</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Point.js~Point.html">Point</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-ccw">ccw</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-fixDec">fixDec</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getDegrees">getDegrees</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getGradians">getGradians</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getRadians">getRadians</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-isNumeric">isNumeric</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-roundNumber">roundNumber</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-AngularSystem">AngularSystem</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-DIGITIZE_PRECISION">DIGITIZE_PRECISION</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-EPSILON">EPSILON</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-PRECISION">PRECISION</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/ccw.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import {EPSILON} from &apos;./utils&apos;
+import Point from &apos;./Point&apos;
+
+// noinspection FunctionTooLongJS
+/** ccw allows to know if traveling from P0 to P1 to P2 we turn counterclockwise
+ *  assuming we are in cartesian space where X is directed to right and Y axis goes up
+ *  and assuming the 3 points are distinct points
+ *  if any points are identical ccw wil trow an error
+ * from p. 350 of Book : Algorithms in C++ by Robert Sedgewick Addison-Wesley ISBN 0-201-51059-6
+ * here are some examples :
+ * Point.ccw(P(0,0), P(2,0), P(2,3)) // should return this Object :
+ * {&apos;counterClockwise&apos;: true, &apos;allPointsAreColinear&apos;: false, &apos;value&apos;: 1}
+ *
+ * Point.ccw(PP(0,0), P(2,0), P(2,-3)) // should return this Object :
+ * {&apos;counterClockwise&apos;: false, &apos;allPointsAreColinear&apos;: false, &apos;value&apos;: -1}
+ *
+ * let {counterClockwise, allPointsAreColinear, value} = Point.ccw(Point(0, 0.3), Point(1, 0.6), Point(2, 0.9))
+ * will give you &apos;counterClockwise&apos;: true, &apos;allPointsAreColinear&apos;: true, &apos;value&apos;: 1
+ * have a look on my unit test in Point.spec.js for more examples
+ * @param {Point} P0
+ * @param {Point} P1
+ * @param {Point} P2
+ * @return {Object} 1 when turn is counterclockwise, -1 if not, and 0 when P2 colinear in segment between P0 and P1
+ */
+export const ccw = function (P0, P1, P2) {
+  if ((P0 instanceof Point) &amp;&amp; (P1 instanceof Point) &amp;&amp; (P2 instanceof Point)) {
+    let result = { counterClockwise: null, allPointsAreColinear: null, value: null }
+    const dx1 = P1.x - P0.x
+    const dx2 = P2.x - P0.x
+    const dy1 = P1.y - P0.y
+    const dy2 = P2.y - P0.y
+    console.log(`### IN Point.ccw(P0 = ${P0.toString()}, P1 = ${P1.toString()}, P2 = ${P2.toString()})`)
+    console.log(`dx1 = ${dx1}, dx2 = ${dx2}, dy1 = ${dy1}, dy2 = ${dy2}`)
+    if ((Math.abs(dx1) &lt;= EPSILON) &amp;&amp; (Math.abs(dy1) &lt;= EPSILON)) {
+      console.log(&apos;ERROR ==&gt; P0 and P1 are identical !&apos;)
+      throw new Error(&apos;PointCcwPointIdenticalException ==&gt; P0 and P1 are identical&apos;)
+    }
+    if ((Math.abs(dx2) &lt;= EPSILON) &amp;&amp; (Math.abs(dy2) &lt;= EPSILON)) {
+      console.log(&apos;ERROR ==&gt; P0 and P2 are identical !&apos;)
+      throw new Error(&apos;PointCcwPointIdenticalException ==&gt; P0 and P2 are identical&apos;)
+    }
+    if (P1.equal(P2)) {
+      console.log(&apos;ERROR ==&gt; P1 and P2 are identical !&apos;)
+      throw new Error(&apos;PointCcwPointIdenticalException ==&gt; P1 and P2 are identical&apos;)
+    }
+    const CPa = dx1 * dy2 // first term of &quot;CrossProduct&quot; or signed magnitude of 3d cross product vector with z=0
+    const CPb = dy1 * dx2 // second term of CrossProduct or signed magnitude
+    console.log(`Cpa = (dx1 * dy2) = ${CPa}, CPb = dy1 * dx2 = ${CPb}`)
+    if (Math.abs(CPa - CPb) &lt;= EPSILON) { // colinear cases (epsilon test is here to handle float errors)
+      console.log(`==&gt; ALL 3 POINTS ARE COLINEAR because = (Cpa - CPb) &lt;= EPSILON `)
+      result.allPointsAreColinear = true
+      if (((dx1 * dx2) &lt; 0) || ((dy1 * dy2) &lt; 0)) {
+        result.counterClockwise = false
+        result.value = -1
+        console.log(`==&gt; And P0 is between P1-&gt;P2`)
+      } else {
+        if ((dx1 * dx1 + dy1 * dy1) &lt; (dx2 * dx2 + dy2 * dy2)) {
+          result.counterClockwise = true
+          result.value = 1
+          console.log(`==&gt; And P1 is between P0-&gt;P2`)
+        } else {
+          result.counterClockwise = false
+          result.value = 0
+          console.log(`==&gt; And P2 is between P0-&gt;P1`)
+        }
+      }
+    } else {
+      result.allPointsAreColinear = false
+      if (CPa &gt; CPb) {
+        result.counterClockwise = true
+        result.value = 1
+        console.log(`=&gt; From P0-&gt;P1-&gt;P2 we turn counter-clockwise`)
+      } else {
+        result.counterClockwise = false
+        result.value = -1
+        console.log(`=&gt; From P0-&gt;P1-&gt;P2 we turn clockwise`)
+      }
+    }
+    return result
+  } else {
+    console.log(&apos;ERROR ==&gt; P0,P1 and P2 SHOULD be of type Point class !&apos;)
+    throw new TypeError(&apos;Point.ccw(P0, P1, P2) expects all parameters to be from Point class&apos;)
+  }
+}
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.0.4)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

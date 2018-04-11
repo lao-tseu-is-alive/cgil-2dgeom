@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../">
+  <title data-ice="title">src/__tests___/Line.spec.js | cgil-geom2d</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="2d geometry ES6 javascript classes like Point Lines with polar coordinates conversions.."><meta property="twitter:card" content="summary"><meta property="twitter:title" content="cgil-geom2d"><meta property="twitter:description" content="2d geometry ES6 javascript classes like Point Lines with polar coordinates conversions.."></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/lao-tseu-is-alive/cgil-2dgeom.git"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Line.js~Line.html">Line</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Point.js~Point.html">Point</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-ccw">ccw</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-fixDec">fixDec</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getDegrees">getDegrees</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getGradians">getGradians</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-getRadians">getRadians</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-isNumeric">isNumeric</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-roundNumber">roundNumber</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-AngularSystem">AngularSystem</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-DIGITIZE_PRECISION">DIGITIZE_PRECISION</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-EPSILON">EPSILON</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-PRECISION">PRECISION</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/__tests___/Line.spec.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">/* eslint-disable no-unused-vars */
+// noinspection NpmUsedModulesInstalled
+import Point from &apos;../Point&apos;
+import Line from &apos;../Line&apos;
+
+// noinspection Annotator
+describe(&apos;Line.js module&apos;, () =&gt; {
+  const L0 = new Line()
+  const P0 = new Point()
+  const P1 = new Point(1.0, 2.0)
+  const L1 = new Line(P0, P1)
+
+  describe(&apos;Line constructor&apos;, () =&gt; {
+    test(
+      &apos;constructor with default parameters should return an instance of Line&apos;,
+      () =&gt; {
+        expect(L0)
+          .toBeInstanceOf(Line)
+      })
+    test(
+      &apos;constructor with default parameters should have startPoint of type Point&apos;,
+      () =&gt; {
+        expect(L0)
+          .toHaveProperty(&apos;startPoint&apos;) &amp;&amp; expect(L0.startPoint)
+          .toBeInstanceOf(Point)
+      })
+    test(
+      &apos;constructor with default parameters should return endPoint of type Point&apos;,
+      () =&gt; {
+        expect(L0)
+          .toHaveProperty(&apos;endPoint&apos;) &amp;&amp; expect(L0.endPoint)
+          .toBeInstanceOf(Point)
+      })
+    test(&apos;new Line(P0, P1) should return an instance of Line&apos;, () =&gt; {
+      expect(L1)
+        .toBeInstanceOf(Line)
+    })
+    test(&apos;should give back startPoint property correctly&apos;, () =&gt; {
+      expect(L1)
+        .toHaveProperty(&apos;startPoint&apos;, P0)
+    })
+    test(&apos;should give back endPoint property correctly&apos;, () =&gt; {
+      expect(L1)
+        .toHaveProperty(&apos;endPoint&apos;, P1)
+    })
+    const badValue = &apos;realWrongXValue&apos;
+    const wrongPoint = new Point()
+    try {
+      // noinspection JSValidateTypes
+      wrongPoint.x = badValue
+    } catch (e) {
+      // console.log(e)
+      // to allow doing this test without throwing the error for the Point
+    }
+    test(&apos;constructor should throw an error if invalid startPoint&apos;, () =&gt; {
+      expect(function () {
+        const LineWrong = new Line(wrongPoint, P1)
+      }).toThrow(&apos;Class Line needs a valid startPoint&apos;)
+    })
+    test(&apos;constructor should throw an error if invalid endPoint&apos;, () =&gt; {
+      expect(function () {
+        const LineWrong = new Line(P0, wrongPoint)
+      }).toThrow(&apos;Class Line needs a valid endPoint&apos;)
+    })
+    test(&apos;constructor should throw an error if startPoint equals endPoint&apos;, () =&gt; {
+      expect(function () {
+        const LineWrong = new Line(P1, P1)
+      }).toThrow(&apos;Class Line needs a endPoint different from startPoint&apos;)
+    })
+  })
+
+  describe(&apos;Line startPoint and endPoint accessors&apos;, () =&gt; {
+    const L2 = new Line()
+    L2.startPoint = P0
+    L2.endPoint = P1
+    const badValue = &apos;wrongXValue&apos;
+    const wrongPoint = new Point()
+    try {
+      wrongPoint.x = badValue
+    } catch (e) {
+      // console.log(e)
+      // to allow doing this test without throwing the error for the Point
+    }
+    test(&apos;should allow to set startPoint correctly&apos;, () =&gt; {
+      expect(L2)
+        .toHaveProperty(&apos;startPoint&apos;, P0)
+    })
+    test(&apos;should allow to set endPoint correctly&apos;, () =&gt; {
+      expect(L2)
+        .toHaveProperty(&apos;endPoint&apos;, P1)
+    })
+    test(&apos;should throw an error if endPoint is not of type Point&apos;, () =&gt; {
+      expect(function () {
+        const LineWrong = new Line(P1, [1, 0])
+      }).toThrow(&apos;endPoint setter needs parameter otherPoint of type Point&apos;)
+    })
+    test(&apos;should throw an error if startPoint is not of type Point&apos;, () =&gt; {
+      expect(function () {
+        // noinspection JSCheckFunctionSignatures
+        const LineWrong = new Line([1, 0], P1)
+      }).toThrow(&apos;startPoint setter needs parameter otherPoint of type Point&apos;)
+    })
+    test(&apos;should throw an error if invalid startPoint&apos;, () =&gt; {
+      expect(function () {
+        const LineWrong = new Line(wrongPoint, P1)
+      }).toThrow(&apos;Class Line needs a valid startPoint&apos;)
+    })
+    test(&apos;should throw an error if invalid endPoint&apos;, () =&gt; {
+      expect(function () {
+        const LineWrong = new Line(P0, wrongPoint)
+      }).toThrow(&apos;Class Line needs a valid endPoint&apos;)
+    })
+    test(&apos;should throw an error if startPoint setter receives point equals endPoint&apos;, () =&gt; {
+      expect(function () {
+        L2.startPoint = P1
+      }).toThrow(&apos;Class Line needs a startPoint different from endPoint&apos;)
+    })
+    test(&apos;should throw an error if endPoint setter receives point equals startPoint&apos;, () =&gt; {
+      expect(function () {
+        L2.endPoint = P0
+      }).toThrow(&apos;Class Line needs a endPoint different from startPoint&apos;)
+    })
+    test(&apos;should assign startPoint by value (copy)&apos;, () =&gt; {
+      const POrigin = new Point()
+      const L3 = new Line(POrigin, P1)
+      const POriginCopy = POrigin.copyRel(0, 0)
+      POrigin.moveTo(10, 20)
+      expect(L3)
+        .toHaveProperty(&apos;startPoint&apos;, POriginCopy)
+    })
+    test(&apos;should assign endPoint by value (copy)&apos;, () =&gt; {
+      const POrigin = new Point()
+      const L3 = new Line(P1, POrigin)
+      const POriginCopy = POrigin.copyRel(0, 0)
+      POrigin.moveTo(10, 20)
+      expect(L3)
+        .toHaveProperty(&apos;endPoint&apos;, POriginCopy)
+    })
+  })
+
+  describe(&apos;Line.toString()&apos;, () =&gt; {
+    test(&apos;should return a correct string representation&apos;, () =&gt; {
+      expect(L1.toString())
+        .toEqual(`Line(${P0.toString()} -&gt; ${P1.toString()})`)
+    })
+  })
+
+  describe(&apos;Line.getLength()&apos;, () =&gt; {
+    test(&apos;should return the correct length of the line&apos;, () =&gt; {
+      const Pa = new Point(1, 1)
+      const Pb = new Point(5, 4) // sqrt((4&#xB2;)+(3&#xB2;)) = sqrt(16 + 9) = sqrt(25) = 5
+      const LLength = new Line(Pa, Pb)
+      expect(LLength.getLength())
+        .toEqual(5)
+    })
+  })
+})
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.0.4)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>
