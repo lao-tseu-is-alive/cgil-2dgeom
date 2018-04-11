@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 // noinspection NpmUsedModulesInstalled
 import Point from '../Point'
 import Line from '../Line'
@@ -90,7 +91,7 @@ describe('Line.js module', () => {
     })
     test('should throw an error if startPoint is not of type Point', () => {
       expect(function () {
-        const LineWrong = new Line(P1, [1,0])
+        const LineWrong = new Line(P1, [1, 0])
       }).toThrow('endPoint setter needs parameter otherPoint of type Point')
     })
     test('should throw an error if startPoint is not of type Point', () => {
@@ -121,22 +122,22 @@ describe('Line.js module', () => {
     })
     test('should assign startPoint by value (copy)', () => {
       const POrigin = new Point()
-      const L3 = new Line(POrigin, P1 )
-      const POriginCopy = POrigin.copyRel(0,0)
-      POrigin.moveTo(10,20)
+      const L3 = new Line(POrigin, P1)
+      const POriginCopy = POrigin.copyRel(0, 0)
+      POrigin.moveTo(10, 20)
       expect(L3)
         .toHaveProperty('startPoint', POriginCopy)
     })
     test('should assign endPoint by value (copy)', () => {
       const POrigin = new Point()
-      const L3 = new Line(P1, POrigin )
-      const POriginCopy = POrigin.copyRel(0,0)
-      POrigin.moveTo(10,20)       
+      const L3 = new Line(P1, POrigin)
+      const POriginCopy = POrigin.copyRel(0, 0)
+      POrigin.moveTo(10, 20)
       expect(L3)
         .toHaveProperty('endPoint', POriginCopy)
     })
   })
-  
+
   describe('Line.toString()', () => {
     test('should return a correct string representation', () => {
       expect(L1.toString())
@@ -144,4 +145,13 @@ describe('Line.js module', () => {
     })
   })
 
+  describe('Line.getLength()', () => {
+    test('should return the correct length of the line', () => {
+      const Pa = new Point(1, 1)
+      const Pb = new Point(5, 4) // sqrt((4²)+(3²)) = sqrt(16 + 9) = sqrt(25) = 5
+      const LLength = new Line(Pa, Pb)
+      expect(LLength.getLength())
+        .toEqual(5)
+    })
+  })
 })

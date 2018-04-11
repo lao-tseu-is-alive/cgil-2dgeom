@@ -27,22 +27,25 @@ describe('utils.js module', () => {
     })
   })
 
-  describe('getDegrees(angle) should convert angles in degrees correctly', () => {
-    test('getRadians(180 in degrees) should give PI', () => {
+  describe('getRadians(angle) should convert angles in degrees correctly', () => {
+    test('getRadians(180, degree) should give PI', () => {
       expect(U.getRadians(180, U.AngularSystem.DEGREE)).toEqual(Math.PI)
     })
-    test('getRadians(Pi in radians) should give PI', () => {
+    test('getRadians(180) should imply second parameter as should give PI', () => {
+      expect(U.getRadians(180)).toEqual(Math.PI)
+    })
+    test('getRadians(PI, radian) should give PI', () => {
       expect(U.getRadians(Math.PI, U.AngularSystem.RADIAN)).toEqual(Math.PI)
     })
-    test('getRadians(200 in gradians) should give PI', () => {
+    test('getRadians(200, gradian) should give PI', () => {
       expect(U.getRadians(200, U.AngularSystem.GRADIAN)).toBeCloseTo(Math.PI, U.EPSILON)
     })
   })
   describe('getDegrees(angle) should convert angles in degrees correctly', () => {
-    test('getDegrees(180 in degrees) should give 180', () => {
+    test('getDegrees(180, degree) should give 180', () => {
       expect(U.getDegrees(180, U.AngularSystem.DEGREE)).toEqual(180)
     })
-    test('getDegrees(Pi in radians) should give 180', () => {
+    test('getDegrees(PI, radian) should give 180', () => {
       expect(U.getDegrees(Math.PI, U.AngularSystem.RADIAN)).toEqual(180)
     })
     test('getDegrees(Pi) should imply second parameter as Radian should give 180', () => {
@@ -78,7 +81,7 @@ describe('utils.js module', () => {
   })
   describe('roundNumber should give a float value rounded to PRECISION', () => {
     test('fixDec(Math.sqrt(2) * Math.sqrt(2)) should give 2 ', () => {
-      expect(U.roundNumber(1/3, 2)).toEqual(0.33)
+      expect(U.roundNumber(1 / 3, 2)).toEqual(0.33)
     })
   })
 })

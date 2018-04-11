@@ -1,5 +1,5 @@
 # cgil-geom2d
-a very light 2d geometry utility classes like Point, Line etc..
+a light 2d geometry utility classes like Point, Line written in ES6 Javascript (~12k for the CommonJS lib).
 
 [![Build Status](https://travis-ci.org/lao-tseu-is-alive/cgil-2dgeom.png?branch=master)](https://travis-ci.org/lao-tseu-is-alive/cgil-2dgeom)
 [![Coverage](https://img.shields.io/codecov/c/github/lao-tseu-is-alive/cgil-2dgeom/master.svg)](https://codecov.io/gh/lao-tseu-is-alive/cgil-2dgeom)

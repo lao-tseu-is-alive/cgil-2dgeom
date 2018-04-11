@@ -88,4 +88,12 @@ export default class Line {
   toString () {
     return `Line(${this.startPoint.toString()} -> ${this.endPoint.toString()})`
   }
+
+  /**
+   * give the length of the line
+   * @returns {number} the length
+   */
+  getLength () {
+    return this.startPoint.distance(this.endPoint)
+  }
 }

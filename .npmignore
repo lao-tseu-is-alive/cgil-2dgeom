@@ -22,3 +22,4 @@ bili.config.js
 .travis.yml
 _config.yml
 .postcssrc.js
+.idea
