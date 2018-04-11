@@ -8,6 +8,8 @@ a light 2d geometry utility classes like Point, Line written in ES6 Javascript (
 
 this code is licensed under the terms of the MIT License.
 
+[Documentation](https://lao-tseu-is-alive.github.io/cgil-2dgeom/docs/) generated from source with [esdoc](https://esdoc.org/)
+
 ## Using it inside the browser
 you can download the UMD library [file dist/geom2d.min.js](https://raw.githubusercontent.com/lao-tseu-is-alive/cgil-2dgeom/master/dist/geom2d.min.js)
 directy to your computer 
@@ -40,7 +42,7 @@ then you can import/require the CommonJS bundle in **dist/geom2d.cjs.js**
 let's use the library Point class to create a nice 12 petal's flowers using a polar equation like this : 
 **r = a sin 6θ**
 
-[Jump to the full example file](https://lao-tseu-is-alive.github.io/cgil-2dgeom/examples/example_UMD.html)
+[Jump to the full example file](https://lao-tseu-is-alive.github.io/cgil-2dgeom/examples/example_UMD_flower.html)
 
 ![alt text](https://raw.githubusercontent.com/lao-tseu-is-alive/cgil-2dgeom/master/examples/images/cgil-geom2d_12_petals_flower_example.png "Using the geom2d.Point class to create a nice 12 petal's flowers from a polar equation")
 
