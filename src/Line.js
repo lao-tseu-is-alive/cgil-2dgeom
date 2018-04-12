@@ -1,4 +1,5 @@
 import Point from './Point'
+import {EPSILON} from './utils'
 // noinspection UnterminatedStatementJS
 
 const lineDefaultOptions = {
@@ -95,5 +96,42 @@ export default class Line {
    */
   getLength () {
     return this.startPoint.distance(this.endPoint)
+  }
+
+  /**
+   * give the array [deltaX, deltaY] corresponding to difference in cartesian coordinates of this line
+   * @returns {number} the length
+   */
+  getVectorArray () {
+    const arrDelta = []
+    arrDelta.push(this.endPoint.x - this.startPoint.x)
+    arrDelta.push(this.endPoint.y - this.startPoint.y)
+    return arrDelta
+  }
+
+  /**
+   * gives the slope of the line or m defined as Δy/Δx in the line equation y = m*x + b (b is y-intercept)
+   * @returns {number} a number the slope of the Line and Infinity if line is vertical
+   */
+  getSlope () {
+    const delta = this.getVectorArray()
+    if (delta[0] < EPSILON) {
+      return Infinity
+    } else {
+      return delta[1] / delta[0] //  Δy/Δx
+    }
+  }
+
+  /**
+   * gives the y-intercept of the line or b in the line equation y = m*x + b (m is the Slope defined as Δy/Δx)
+   * @returns {number} a number the y-intercept of the Line and NaN if line is vertical
+   */
+  getYIntercept () {
+    const slope = this.getSlope()
+    if (slope === Infinity) {
+      return NaN
+    } else {
+      return this.startPoint.y - (slope * this.startPoint.x)
+    }
   }
 }

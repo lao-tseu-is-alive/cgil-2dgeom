@@ -154,4 +154,50 @@ describe('Line.js module', () => {
         .toEqual(5)
     })
   })
+
+  describe('Line.getSlope()', () => {
+    const POrigin = new Point() // 0,0 implicit
+    const LHorizontal = new Line(POrigin, new Point(5, 0))
+    test('Slope for Line(POrigin, (5, 0))should equal 0 (horizontal line at origin)', () => {
+      expect(LHorizontal.getSlope()).toEqual(0)
+    })
+    test('Slope for Line((1,2), (3, 2))should should equal  0 (horizontal line)', () => {
+      expect(new Line(new Point(1, 2), new Point(3, 2)).getSlope()).toEqual(0)
+    })
+    test('Slope for Line((1,1), (2, 2))should return 1 (45deg line)', () => {
+      expect(new Line(new Point(1, 1), new Point(2, 2)).getSlope()).toEqual(1)
+    })
+    test('Slope for Line((1,1), (2, 0))should return 1 (-45deg line)', () => {
+      expect(new Line(new Point(1, 1), new Point(2, 0)).getSlope()).toEqual(-1)
+    })
+    test('Slope for Line((1,1), (2, 0))should return Infinity (vertical line)', () => {
+      expect(new Line(new Point(1, 1), new Point(1, 2)).getSlope()).toEqual(Infinity)
+    })
+    test('Slope for Line((0.3,0.2), (1.6, 0.5))should return Infinity (vertical line)', () => {
+      expect(new Line(new Point(0.3, 0.2), new Point(1.6, 0.5)).getSlope()).toBeCloseTo(0.23076923, 8)
+    })
+  })
+
+  describe('Line.getYintercept()', () => {
+    const POrigin = new Point() // 0,0 implicit
+    const LHorizontal = new Line(POrigin, new Point(5, 0))
+    test('YIntercept for Line(POrigin, (5, 0))should equal 0 (horizontal line at origin)', () => {
+      expect(LHorizontal.getYIntercept()).toEqual(0)
+    })
+    test('YIntercept for Line((1,2), (3, 2))should should equal  0 (horizontal line)', () => {
+      expect(new Line(new Point(1, 2), new Point(3, 2)).getYIntercept()).toEqual(2)
+    })
+    test('YIntercept for Line((1,1), (2, 2))should return 1 (45deg line)', () => {
+      expect(new Line(new Point(1, 1), new Point(2, 2)).getYIntercept()).toEqual(0)
+    })
+    test('YIntercept for Line((1,1), (2, 0))should return 1 (-45deg line)', () => {
+      expect(new Line(new Point(1, 1), new Point(2, 0)).getYIntercept()).toEqual(2)
+    })
+    test('YIntercept for Line((1,1), (2, 0))should return Infinity (vertical line)', () => {
+      expect(new Line(new Point(1, 1), new Point(1, 2)).getYIntercept()).toEqual(NaN)
+    })
+    test('YIntercept for Line((0.3,0.2), (1.6, 0.5))should return Infinity (vertical line)', () => {
+      expect(new Line(new Point(0.3, 0.2), new Point(1.6, 0.5)).getYIntercept()).toBeCloseTo(0.13076923, 8)
+    })
+  })
 })
