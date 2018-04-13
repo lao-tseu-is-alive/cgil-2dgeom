@@ -391,13 +391,13 @@ window.esdocSearchIndex = [
   ],
   [
     "src/line.js~line#endpoint",
-    "class/src/Line.js~Line.html#instance-get-endPoint",
+    "class/src/Line.js~Line.html#instance-set-endPoint",
     "src/Line.js~Line#endPoint",
     "member"
   ],
   [
     "src/line.js~line#endpoint",
-    "class/src/Line.js~Line.html#instance-set-endPoint",
+    "class/src/Line.js~Line.html#instance-get-endPoint",
     "src/Line.js~Line#endPoint",
     "member"
   ],
@@ -405,6 +405,24 @@ window.esdocSearchIndex = [
     "src/line.js~line#getlength",
     "class/src/Line.js~Line.html#instance-method-getLength",
     "src/Line.js~Line#getLength",
+    "method"
+  ],
+  [
+    "src/line.js~line#getslope",
+    "class/src/Line.js~Line.html#instance-method-getSlope",
+    "src/Line.js~Line#getSlope",
+    "method"
+  ],
+  [
+    "src/line.js~line#getvectorarray",
+    "class/src/Line.js~Line.html#instance-method-getVectorArray",
+    "src/Line.js~Line#getVectorArray",
+    "method"
+  ],
+  [
+    "src/line.js~line#getyintercept",
+    "class/src/Line.js~Line.html#instance-method-getYIntercept",
+    "src/Line.js~Line#getYIntercept",
     "method"
   ],
   [
@@ -420,9 +438,39 @@ window.esdocSearchIndex = [
     "member"
   ],
   [
+    "src/line.js~line#toarray",
+    "class/src/Line.js~Line.html#instance-method-toArray",
+    "src/Line.js~Line#toArray",
+    "method"
+  ],
+  [
+    "src/line.js~line#toewkt",
+    "class/src/Line.js~Line.html#instance-method-toEWKT",
+    "src/Line.js~Line#toEWKT",
+    "method"
+  ],
+  [
+    "src/line.js~line#togeojson",
+    "class/src/Line.js~Line.html#instance-method-toGeoJSON",
+    "src/Line.js~Line#toGeoJSON",
+    "method"
+  ],
+  [
     "src/line.js~line#tostring",
     "class/src/Line.js~Line.html#instance-method-toString",
     "src/Line.js~Line#toString",
+    "method"
+  ],
+  [
+    "src/line.js~line#towkt",
+    "class/src/Line.js~Line.html#instance-method-toWKT",
+    "src/Line.js~Line#toWKT",
+    "method"
+  ],
+  [
+    "src/line.js~line.fromline",
+    "class/src/Line.js~Line.html#static-method-fromLine",
+    "src/Line.js~Line.fromLine",
     "method"
   ],
   [
@@ -565,13 +613,13 @@ window.esdocSearchIndex = [
   ],
   [
     "src/point.js~point#y",
-    "class/src/Point.js~Point.html#instance-get-y",
+    "class/src/Point.js~Point.html#instance-set-y",
     "src/Point.js~Point#y",
     "member"
   ],
   [
     "src/point.js~point#y",
-    "class/src/Point.js~Point.html#instance-set-y",
+    "class/src/Point.js~Point.html#instance-get-y",
     "src/Point.js~Point#y",
     "member"
   ],

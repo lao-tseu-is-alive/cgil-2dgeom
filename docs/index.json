@@ -567,7 +567,7 @@
     "__docId__": 48,
     "kind": "file",
     "name": "src/Line.js",
-    "content": "import Point from './Point'\n// noinspection UnterminatedStatementJS\n\nconst lineDefaultOptions = {\n  stroke: '#E1E1E1',\n  strokeWidth: 2\n}\n\n/**\n * Class representing  a line in 2 dimension cartesian space\n */\nexport default class Line {\n  /**\n   * Creates a line\n   * @param {Point} startPoint of the Line\n   * @param {Point} endPoint of the Line\n   * @param {Object} params\n   */\n  constructor (startPoint = new Point(), endPoint = new Point(1, 1), params = null) {\n    this._options = Object.assign({}, lineDefaultOptions, params)\n    // using property setters above to check for valid values\n    this.startPoint = startPoint\n    this.endPoint = endPoint\n  }\n\n  /**\n   * Get the starting Point.\n   * @return {Point} The starting Point of this line.\n   */\n  get startPoint () {\n    return this._startPoint\n  }\n\n  /**\n   * Set the starting Point.\n   * @param {Point} otherPoint is the starting Point\n   */\n  set startPoint (otherPoint) {\n    if (otherPoint instanceof Point) {\n      if (otherPoint.isInvalid) {\n        throw new TypeError(`Class Line needs a valid startPoint : ${otherPoint.InvalidReason}`)\n      } else {\n        if (this._endPoint !== undefined && otherPoint.equal(this._endPoint)) {\n          throw new TypeError(`Class Line needs a startPoint different from endPoint : ${otherPoint.toString()} == ${this._endPoint.toString()}`)\n        } else {\n          // make a copy of otherPoint values we don't want keep a reference\n          this._startPoint = Point.fromPoint(otherPoint)\n        }\n      }\n    } else {\n      throw new TypeError('startPoint setter needs parameter otherPoint of type Point')\n    }\n  }\n\n  /**\n   * Get the endPoint value.\n   * @return {Point} The endPoint value.\n   */\n  get endPoint () {\n    return this._endPoint\n  }\n\n  /**\n   * Set the endPoint value\n   * @param {Point} otherPoint is the endPoint\n   */\n  set endPoint (otherPoint) {\n    if (otherPoint instanceof Point) {\n      if (otherPoint.isInvalid) {\n        throw new TypeError(`Class Line needs a valid endPoint : ${otherPoint.InvalidReason}`)\n      } else {\n        if (this._startPoint !== undefined && otherPoint.equal(this._startPoint)) {\n          throw new TypeError(`Class Line needs a endPoint different from startPoint: ${otherPoint.toString()} == ${this._startPoint.toString()}`)\n        } else {\n          // make a copy of otherPoint values we don't want keep a reference\n          this._endPoint = Point.fromPoint(otherPoint)\n        }\n      }\n    } else {\n      throw new TypeError('endPoint setter needs parameter otherPoint of type Point')\n    }\n  }\n\n  /**\n   * give a string representation of this class instance\n   * @returns {string}\n   */\n  toString () {\n    return `Line(${this.startPoint.toString()} -> ${this.endPoint.toString()})`\n  }\n\n  /**\n   * give the length of the line\n   * @returns {number} the length\n   */\n  getLength () {\n    return this.startPoint.distance(this.endPoint)\n  }\n}\n",
+    "content": "import Point from './Point'\nimport {EPSILON} from './utils'\n// noinspection UnterminatedStatementJS\n\nconst lineDefaultOptions = {\n  stroke: '#E1E1E1',\n  strokeWidth: 2\n}\n\n/**\n * Class representing a line segment in 2 dimension cartesian space\n * and helpers function to get other representations like toWKT, toGeoJSON etc\n * the line equation y = m*x + b can be derived with m=getSlope() and b=getYintercept() methods\n */\nexport default class Line {\n  /**\n   * Creates a line\n   * @param {Point} startPoint of the Line\n   * @param {Point} endPoint of the Line\n   * @param {Object} params\n   */\n  constructor (startPoint = new Point(), endPoint = new Point(1, 1), params = null) {\n    this._options = Object.assign({}, lineDefaultOptions, params)\n    // using property setters above to check for valid values\n    this.startPoint = startPoint\n    this.endPoint = endPoint\n  }\n\n  /**\n   * get a new Line that is a copy (clone) of the otherLine passed has parameter\n   * @param {Line} otherLine is the Line you want to copy\n   * @returns {Line} a new Line located at the same cartesian coordinates as otherLine\n   */\n  static fromLine (otherLine) {\n    if (otherLine instanceof Line) {\n      return new Line(otherLine.startPoint, otherLine.endPoint)\n    } else {\n      throw new TypeError('fromLine needs parameter otherLine of type Line')\n    }\n  }\n\n  /**\n   * Get the starting Point.\n   * @return {Point} The starting Point of this line.\n   */\n  get startPoint () {\n    return this._startPoint\n  }\n\n  /**\n   * Set the starting Point.\n   * @param {Point} otherPoint is the starting Point\n   */\n  set startPoint (otherPoint) {\n    if (otherPoint instanceof Point) {\n      if (otherPoint.isInvalid) {\n        throw new TypeError(`Class Line needs a valid startPoint : ${otherPoint.InvalidReason}`)\n      } else {\n        if (this._endPoint !== undefined && otherPoint.equal(this._endPoint)) {\n          throw new TypeError(`Class Line needs a startPoint different from endPoint : ${otherPoint.toString()} == ${this._endPoint.toString()}`)\n        } else {\n          // make a copy of otherPoint values we don't want keep a reference\n          this._startPoint = Point.fromPoint(otherPoint)\n        }\n      }\n    } else {\n      throw new TypeError('startPoint setter needs parameter otherPoint of type Point')\n    }\n  }\n\n  /**\n   * Get the endPoint value.\n   * @return {Point} The endPoint value.\n   */\n  get endPoint () {\n    return this._endPoint\n  }\n\n  /**\n   * Set the endPoint value\n   * @param {Point} otherPoint is the endPoint\n   */\n  set endPoint (otherPoint) {\n    if (otherPoint instanceof Point) {\n      if (otherPoint.isInvalid) {\n        throw new TypeError(`Class Line needs a valid endPoint : ${otherPoint.InvalidReason}`)\n      } else {\n        if (this._startPoint !== undefined && otherPoint.equal(this._startPoint)) {\n          throw new TypeError(`Class Line needs a endPoint different from startPoint: ${otherPoint.toString()} == ${this._startPoint.toString()}`)\n        } else {\n          // make a copy of otherPoint values we don't want keep a reference\n          this._endPoint = Point.fromPoint(otherPoint)\n        }\n      }\n    } else {\n      throw new TypeError('endPoint setter needs parameter otherPoint of type Point')\n    }\n  }\n\n  /**\n   * give a string representation of this Line class instance\n   * @returns {string}\n   */\n  toString () {\n    return `Line(${this.startPoint.toString()} -> ${this.endPoint.toString()})`\n  }\n\n  /**\n   * give an array representation of this Line class instance,\n   * you can use Array.flatten()  to convert to [x1, y1, x2, y2]\n   * if flatten is not implemented use reduce instead : arrResult.reduce((acc, val) => acc.concat(val), []);\n   * @returns {Array} an Array giving the coord of the line like this [[x1, y1], [x2, y2]]\n   */\n  toArray () {\n    let tmpArray = []\n    tmpArray.push(this.startPoint.toArray())\n    tmpArray.push(this.endPoint.toArray())\n    return tmpArray\n  }\n\n  /**\n   * give an OGC Well-known text (WKT) representation of this class instance\n   * https://en.wikipedia.org/wiki/Well-known_text\n   * @returns {string}\n   */\n  toWKT () {\n    return `LINESTRING(${this.startPoint.x} ${this.startPoint.y}, ${this.endPoint.x} ${this.endPoint.y})`\n  }\n\n  /**\n   * give an Postgis Extended Well-known text (EWKT) representation of this class instance\n   * https://postgis.net/docs/using_postgis_dbmanagement.html#EWKB_EWKT\n   * @param {number} srid is the Spatial reference systems identifier EPSG code default is 21781 for Switzerland MN03\n   * @returns {string}\n   */\n  toEWKT (srid = 21781) {\n    return `SRID=${srid};LINESTRING(${this.startPoint.x} ${this.startPoint.y}, ${this.endPoint.x} ${this.endPoint.y})`\n  }\n\n  // TO implement toEWKB I can maybe use this lib : https://github.com/cschwarz/wkx\n\n  /**\n   * give a GeoJSON geometry (http://geojson.org/) representation of this class instance geometry\n   * @returns {string}\n   */\n  toGeoJSON () {\n    return `{\"type\":\"LineString\",\"coordinates\":[[${this.startPoint.x},${this.startPoint.y}],[${this.endPoint.x},${this.endPoint.y}]]}`\n  }\n\n  /**\n   * give the length of the line\n   * @returns {number} the length\n   */\n  getLength () {\n    return this.startPoint.distance(this.endPoint)\n  }\n\n  /**\n   * give the array [deltaX, deltaY] corresponding to difference in cartesian coordinates of this line\n   * @returns {number} the length\n   */\n  getVectorArray () {\n    const arrDelta = []\n    arrDelta.push(this.endPoint.x - this.startPoint.x)\n    arrDelta.push(this.endPoint.y - this.startPoint.y)\n    return arrDelta\n  }\n\n  /**\n   * gives the slope of the line or m defined as Δy/Δx in the line equation y = m*x + b (b is y-intercept)\n   * @returns {number} a number the slope of the Line and Infinity if line is vertical\n   */\n  getSlope () {\n    const delta = this.getVectorArray()\n    if (delta[0] < EPSILON) {\n      return Infinity\n    } else {\n      return delta[1] / delta[0] //  Δy/Δx\n    }\n  }\n\n  /**\n   * gives the y-intercept of the line or b in the line equation y = m*x + b (m is the Slope defined as Δy/Δx)\n   * @returns {number} a number the y-intercept of the Line and NaN if line is vertical\n   */\n  getYIntercept () {\n    const slope = this.getSlope()\n    if (slope === Infinity) {\n      return NaN\n    } else {\n      return this.startPoint.y - (slope * this.startPoint.x)\n    }\n  }\n}\n",
     "static": true,
     "longname": "/home/cgil/WebstormProjects/cgil-geom2d/src/Line.js",
     "access": "public",
@@ -586,7 +586,7 @@
     "importPath": "cgil-geom2d/src/Line.js",
     "importStyle": null,
     "description": null,
-    "lineNumber": 4,
+    "lineNumber": 5,
     "undocument": true,
     "type": {
       "types": [
@@ -607,7 +607,7 @@
     "importPath": "cgil-geom2d/src/Line.js",
     "importStyle": "Line",
     "description": null,
-    "lineNumber": 12,
+    "lineNumber": 15,
     "undocument": true,
     "interface": false
   },
@@ -622,7 +622,7 @@
     "longname": "src/Line.js~Line#constructor",
     "access": "public",
     "description": "Creates a line",
-    "lineNumber": 19,
+    "lineNumber": 22,
     "params": [
       {
         "nullable": null,
@@ -665,7 +665,7 @@
     "longname": "src/Line.js~Line#_options",
     "access": "private",
     "description": null,
-    "lineNumber": 20,
+    "lineNumber": 23,
     "undocument": true,
     "type": {
       "types": [
@@ -675,6 +675,45 @@
   },
   {
     "__docId__": 55,
+    "kind": "method",
+    "name": "fromLine",
+    "memberof": "src/Line.js~Line",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/Line.js~Line.fromLine",
+    "access": "public",
+    "description": "get a new Line that is a copy (clone) of the otherLine passed has parameter",
+    "lineNumber": 34,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "{Line} a new Line located at the same cartesian coordinates as otherLine"
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Line"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "otherLine",
+        "description": "is the Line you want to copy"
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "Line"
+      ],
+      "spread": false,
+      "description": "a new Line located at the same cartesian coordinates as otherLine"
+    }
+  },
+  {
+    "__docId__": 56,
     "kind": "get",
     "name": "startPoint",
     "memberof": "src/Line.js~Line",
@@ -684,7 +723,7 @@
     "longname": "src/Line.js~Line#startPoint",
     "access": "public",
     "description": "Get the starting Point.",
-    "lineNumber": 30,
+    "lineNumber": 46,
     "return": {
       "nullable": null,
       "types": [
@@ -700,7 +739,7 @@
     }
   },
   {
-    "__docId__": 56,
+    "__docId__": 57,
     "kind": "set",
     "name": "startPoint",
     "memberof": "src/Line.js~Line",
@@ -710,7 +749,7 @@
     "longname": "src/Line.js~Line#startPoint",
     "access": "public",
     "description": "Set the starting Point.",
-    "lineNumber": 38,
+    "lineNumber": 54,
     "params": [
       {
         "nullable": null,
@@ -725,7 +764,7 @@
     ]
   },
   {
-    "__docId__": 57,
+    "__docId__": 58,
     "kind": "member",
     "name": "_startPoint",
     "memberof": "src/Line.js~Line",
@@ -733,7 +772,7 @@
     "longname": "src/Line.js~Line#_startPoint",
     "access": "private",
     "description": null,
-    "lineNumber": 47,
+    "lineNumber": 63,
     "undocument": true,
     "type": {
       "types": [
@@ -742,7 +781,7 @@
     }
   },
   {
-    "__docId__": 58,
+    "__docId__": 59,
     "kind": "get",
     "name": "endPoint",
     "memberof": "src/Line.js~Line",
@@ -752,7 +791,7 @@
     "longname": "src/Line.js~Line#endPoint",
     "access": "public",
     "description": "Get the endPoint value.",
-    "lineNumber": 59,
+    "lineNumber": 75,
     "return": {
       "nullable": null,
       "types": [
@@ -768,7 +807,7 @@
     }
   },
   {
-    "__docId__": 59,
+    "__docId__": 60,
     "kind": "set",
     "name": "endPoint",
     "memberof": "src/Line.js~Line",
@@ -778,7 +817,7 @@
     "longname": "src/Line.js~Line#endPoint",
     "access": "public",
     "description": "Set the endPoint value",
-    "lineNumber": 67,
+    "lineNumber": 83,
     "params": [
       {
         "nullable": null,
@@ -793,7 +832,7 @@
     ]
   },
   {
-    "__docId__": 60,
+    "__docId__": 61,
     "kind": "member",
     "name": "_endPoint",
     "memberof": "src/Line.js~Line",
@@ -801,7 +840,7 @@
     "longname": "src/Line.js~Line#_endPoint",
     "access": "private",
     "description": null,
-    "lineNumber": 76,
+    "lineNumber": 92,
     "undocument": true,
     "type": {
       "types": [
@@ -810,7 +849,7 @@
     }
   },
   {
-    "__docId__": 61,
+    "__docId__": 62,
     "kind": "method",
     "name": "toString",
     "memberof": "src/Line.js~Line",
@@ -819,8 +858,8 @@
     "static": false,
     "longname": "src/Line.js~Line#toString",
     "access": "public",
-    "description": "give a string representation of this class instance",
-    "lineNumber": 88,
+    "description": "give a string representation of this Line class instance",
+    "lineNumber": 104,
     "unknown": [
       {
         "tagName": "@returns",
@@ -838,7 +877,130 @@
     "params": []
   },
   {
-    "__docId__": 62,
+    "__docId__": 63,
+    "kind": "method",
+    "name": "toArray",
+    "memberof": "src/Line.js~Line",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/Line.js~Line#toArray",
+    "access": "public",
+    "description": "give an array representation of this Line class instance,\nyou can use Array.flatten()  to convert to [x1, y1, x2, y2]\nif flatten is not implemented use reduce instead : arrResult.reduce((acc, val) => acc.concat(val), []);",
+    "lineNumber": 114,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "{Array} an Array giving the coord of the line like this [[x1, y1], [x2, y2]]"
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "Array"
+      ],
+      "spread": false,
+      "description": "an Array giving the coord of the line like this [[x1, y1], [x2, y2]]"
+    },
+    "params": []
+  },
+  {
+    "__docId__": 64,
+    "kind": "method",
+    "name": "toWKT",
+    "memberof": "src/Line.js~Line",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/Line.js~Line#toWKT",
+    "access": "public",
+    "description": "give an OGC Well-known text (WKT) representation of this class instance\nhttps://en.wikipedia.org/wiki/Well-known_text",
+    "lineNumber": 126,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "{string}"
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "string"
+      ],
+      "spread": false,
+      "description": ""
+    },
+    "params": []
+  },
+  {
+    "__docId__": 65,
+    "kind": "method",
+    "name": "toEWKT",
+    "memberof": "src/Line.js~Line",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/Line.js~Line#toEWKT",
+    "access": "public",
+    "description": "give an Postgis Extended Well-known text (EWKT) representation of this class instance\nhttps://postgis.net/docs/using_postgis_dbmanagement.html#EWKB_EWKT",
+    "lineNumber": 136,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "{string}"
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "number"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "srid",
+        "description": "is the Spatial reference systems identifier EPSG code default is 21781 for Switzerland MN03"
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "string"
+      ],
+      "spread": false,
+      "description": ""
+    }
+  },
+  {
+    "__docId__": 66,
+    "kind": "method",
+    "name": "toGeoJSON",
+    "memberof": "src/Line.js~Line",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/Line.js~Line#toGeoJSON",
+    "access": "public",
+    "description": "give a GeoJSON geometry (http://geojson.org/) representation of this class instance geometry",
+    "lineNumber": 146,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "{string}"
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "string"
+      ],
+      "spread": false,
+      "description": ""
+    },
+    "params": []
+  },
+  {
+    "__docId__": 67,
     "kind": "method",
     "name": "getLength",
     "memberof": "src/Line.js~Line",
@@ -848,7 +1010,7 @@
     "longname": "src/Line.js~Line#getLength",
     "access": "public",
     "description": "give the length of the line",
-    "lineNumber": 96,
+    "lineNumber": 154,
     "unknown": [
       {
         "tagName": "@returns",
@@ -866,10 +1028,94 @@
     "params": []
   },
   {
-    "__docId__": 63,
+    "__docId__": 68,
+    "kind": "method",
+    "name": "getVectorArray",
+    "memberof": "src/Line.js~Line",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/Line.js~Line#getVectorArray",
+    "access": "public",
+    "description": "give the array [deltaX, deltaY] corresponding to difference in cartesian coordinates of this line",
+    "lineNumber": 162,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "{number} the length"
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "number"
+      ],
+      "spread": false,
+      "description": "the length"
+    },
+    "params": []
+  },
+  {
+    "__docId__": 69,
+    "kind": "method",
+    "name": "getSlope",
+    "memberof": "src/Line.js~Line",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/Line.js~Line#getSlope",
+    "access": "public",
+    "description": "gives the slope of the line or m defined as Δy/Δx in the line equation y = m*x + b (b is y-intercept)",
+    "lineNumber": 173,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "{number} a number the slope of the Line and Infinity if line is vertical"
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "number"
+      ],
+      "spread": false,
+      "description": "a number the slope of the Line and Infinity if line is vertical"
+    },
+    "params": []
+  },
+  {
+    "__docId__": 70,
+    "kind": "method",
+    "name": "getYIntercept",
+    "memberof": "src/Line.js~Line",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/Line.js~Line#getYIntercept",
+    "access": "public",
+    "description": "gives the y-intercept of the line or b in the line equation y = m*x + b (m is the Slope defined as Δy/Δx)",
+    "lineNumber": 186,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "{number} a number the y-intercept of the Line and NaN if line is vertical"
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "number"
+      ],
+      "spread": false,
+      "description": "a number the y-intercept of the Line and NaN if line is vertical"
+    },
+    "params": []
+  },
+  {
+    "__docId__": 71,
     "kind": "file",
     "name": "src/Point.js",
-    "content": "import {isNumeric, EPSILON, AngularSystem, getRadians, roundNumber, PRECISION} from './utils'\n\n// noinspection SpellCheckingInspection\n/**\n * Class representing  a point in 2 dimension cartesian space\n */\nexport default class Point {\n  /**\n   * Creates a point\n   * @param {number} x coordinates in cartesian space or array with [x, y] numbers\n   * @param {number} y coordinates in cartesian space\n   */\n  constructor (x = 0, y = 0) {\n    if ((typeof x[0] === 'number') && (typeof x[1] === 'number')) {\n      // here i am using x and y attribute setter so that correct checks are done\n      this.x = x[0]\n      this.y = x[1]\n    } else {\n      // using x and y attribute setter\n      this.x = x\n      this.y = y\n    }\n  }\n\n  /**\n   * creates a new Point in cartesian space from polar coordinates\n   * @param {number} radius is the distance from origin to the point\n   * @param {number} theta is the angle from x axes origin to point in mathematical order Counter-Clockwise\n   * @param {Object} angleSystem your choice of one of AngularSystem Enum Radian, Degree or Gradians\n   * @returns {Point} a new Point(x,y) located at the given polar coordinates\n   */\n  static fromPolar (radius, theta, angleSystem = AngularSystem.DEGREE) {\n    if ((isNumeric(radius)) && (isNumeric(theta))) {\n      let angle = 0\n      if (angleSystem === AngularSystem.RADIAN) {\n        angle = theta\n      } else {\n        angle = getRadians(theta)\n      }\n      let tmpPoint = new Point()\n      tmpPoint._radius = radius\n      tmpPoint._theta = angle // we store angle in radians\n      const tmpX = radius * Math.cos(angle)\n      tmpPoint.x = Math.abs(tmpX) <= EPSILON ? 0 : roundNumber(tmpX, PRECISION)\n      const tmpY = radius * Math.sin(angle)\n      // noinspection JSSuspiciousNameCombination\n      tmpPoint.y = Math.abs(tmpY) <= EPSILON ? 0 : roundNumber(tmpY, PRECISION)\n      return tmpPoint\n    } else {\n      throw new TypeError('fromPolar needs radius and theta to be valid numbers !')\n    }\n  }\n\n  /**\n   * get a new Point that is a copy of the otherPoint passed has parameter\n   * @param {Point} otherPoint is the Point you want to copy\n   * @returns {Point} a new Point located at the same cartesian coordinates as otherPoint\n   */\n  static fromPoint (otherPoint) {\n    if (otherPoint instanceof Point) {\n      return new Point(otherPoint.x, otherPoint.y)\n    } else {\n      throw new TypeError('fromPoint needs parameter otherPoint of type Point')\n    }\n  }\n\n  /**\n   * Get the x value.\n   * @return {number} The x value.\n   */\n  get x () {\n    return this._x\n  }\n\n  /**\n   * Set the x value\n   * @param {number} value is the new numeric value for x\n   */\n  set x (value) {\n    if (isNumeric(value)) {\n      // noinspection JSCheckFunctionSignatures\n      this._x = parseFloat(value)\n    } else {\n      this._x = NaN\n      this.isInvalid = true\n      this.InvalidReason = `cannot set x to ${value} because it is not a numeric value`\n      throw new TypeError(`Point.x setter needs a numeric value and ${value} is not`)\n    }\n  }\n\n  /**\n   * Get the y value.\n   * @return {number} The y value.\n   */\n  get y () {\n    return this._y\n  }\n\n  /**\n   * Set the y value\n   * @param {number} value is the new numeric value for y\n   */\n  set y (value) {\n    if (isNumeric(value)) {\n      // noinspection JSCheckFunctionSignatures\n      this._y = parseFloat(value)\n    } else {\n      this._y = NaN\n      this.isInvalid = true\n      this.InvalidReason = `cannot set y to ${value} because it is not a numeric value`\n      throw new TypeError(`Point.y setter needs a numeric value and ${value} is not`)\n    }\n  }\n\n  /**\n   * give a string representation of this class instance\n   * @param {string} separator placed between x and y values ', ' by default\n   * @param {boolean} surroundingParenthesis allow to tell if result string should be surrounded with parenthesis (True by default)\n   * @param {number} precision defines the number of decimals for the coordinates (2 by default)\n   * @returns {string}\n   */\n  toString (separator = ',', surroundingParenthesis = true, precision = 2) {\n    if (surroundingParenthesis) {\n      return `(${roundNumber(this.x, precision)}${separator} ${roundNumber(this.y, 2)})`\n    } else {\n      return `${roundNumber(this.x, precision)}${separator} ${roundNumber(this.y, 2)}`\n    }\n  }\n\n  /**\n   * give an array representation of this class instance\n   * @returns {Array}\n   */\n  toArray () {\n    return [this.x, this.y]\n  }\n\n  /**\n   * give an OGC Well-known text (WKT) representation of this class instance\n   * https://en.wikipedia.org/wiki/Well-known_text\n   * @returns {string}\n   */\n  toWKT () {\n    return `POINT(${this.x} ${this.y})`\n  }\n\n  /**\n   * give an Postgis Extended Well-known text (EWKT) representation of this class instance\n   * https://postgis.net/docs/using_postgis_dbmanagement.html#EWKB_EWKT\n   * @param {number} srid is the Spatial reference systems identifier EPSG code default is 21781 for Switzerland MN03\n   * @returns {string}\n   */\n  toEWKT (srid = 21781) {\n    return `SRID=${srid};POINT(${this.x} ${this.y})`\n  }\n\n  // TO implement toEWKB I can maybe use this lib : https://github.com/cschwarz/wkx\n\n  /**\n   * give a GeoJSON (http://geojson.org/) representation of this class instance geometry\n   * @returns {string}\n   */\n  toGeoJSON () {\n    return `{\"type\":\"Point\",\"coordinates\":[${this.x},${this.y}]}`\n  }\n\n  /**\n   * will move this Point to the new position in cartesian space given by the arrCoordinates\n   * @param {Array} arrCoordinates is an array with the 2 cartesian coordinates [x, y]\n   * @returns {Point} return this instance of the object (to allow function chaining)\n   */\n  moveToArray (arrCoordinates) {\n    if ((isNumeric(arrCoordinates[0])) && (isNumeric(arrCoordinates[1]))) {\n      this.x = arrCoordinates[0]\n      this.y = arrCoordinates[1]\n      return this\n    } else {\n      throw new TypeError('moveToArray needs an array of 2 numbers like this [1.0, 2.0]')\n    }\n  }\n\n  /**\n   * will move this Point to the new position in cartesian space given by the newX and newY values\n   * @param {number} newX is the new x coordinates in cartesian space of this Point\n   * @param {number} newY is the new y coordinates in cartesian space of this Point\n   * @returns {Point} return this instance of the object (to allow function chaining)\n   */\n  moveTo (newX, newY) {\n    if ((isNumeric(newX)) && (isNumeric(newY))) {\n      this.x = newX\n      this.y = newY\n      return this\n    } else {\n      throw new TypeError('moveTo needs newX and newY to be valid numbers !')\n    }\n  }\n\n  /**\n   * move this Point relative to its position by the arrVector displacement in cartesian space\n   * @param {Array} arrVector is an array representing the vector displacement to apply to actual coordinates [deltaX, deltaY]\n   * @returns {Point} return this instance of the object (to allow function chaining)\n   */\n  moveRelArray (arrVector) {\n    if ((isNumeric(arrVector[0])) && (isNumeric(arrVector[1]))) {\n      this.x = this.x + arrVector[0]\n      this.y = this.y + arrVector[1]\n      return this\n    } else {\n      throw new TypeError('moveRelArray needs an array of 2 numbers like this [1.0, 2.0]')\n    }\n  }\n\n  /**\n   * move this Point relative to its position by the deltaX, deltaY displacement in cartesian space\n   * @param {number} deltaX is the new x coordinates in cartesian space of this Point\n   * @param {number} deltaY is the new y coordinates in cartesian space of this Point\n   * @returns {Point} return this instance of the object (to allow function chaining)\n   */\n  moveRel (deltaX, deltaY) {\n    if ((isNumeric(deltaX)) && (isNumeric(deltaY))) {\n      this.x = this.x + deltaX\n      this.y = this.y + deltaY\n      return this\n    } else {\n      throw new TypeError('moveRel needs deltaX and deltaY to be valid numbers !')\n    }\n  }\n\n  /**\n   * move this Point relative to its position by the polar displacement in cartesian space\n   * @param {number} radius is the distance from origin to the point\n   * @param {number} theta is the angle from x axes origin to point in mathematical order Counter-Clockwise\n   * @param {Object} angleSystem your choice of one of AngularSystem Enum Radian, Degree or Gradians\n   * @returns {Point} return this instance of the object (to allow function chaining)\n   */\n  moveRelPolar (radius, theta, angleSystem = AngularSystem.DEGREE) {\n    let tmpPoint = Point.fromPolar(radius, theta, angleSystem)\n    this.x = this.x + tmpPoint.x\n    this.y = this.y + tmpPoint.y\n    return this\n  }\n\n  /**\n   * copy this Point relative to its position by the arrVector displacement in cartesian space\n   * @param {Array} arrVector is an array representing the vector displacement to apply to actual coordinates [deltaX, deltaY]\n   * @returns {Point} a new Point object at the relative displacement arrVector from original Point\n   */\n  copyRelArray (arrVector) {\n    if ((isNumeric(arrVector[0])) && (isNumeric(arrVector[1]))) {\n      let tmpPoint = Point.fromPoint(this)\n      tmpPoint.x = tmpPoint.x + arrVector[0]\n      tmpPoint.y = tmpPoint.y + arrVector[1]\n      return tmpPoint\n    } else {\n      throw new TypeError('copyRelArray needs an array of 2 numbers like this [1.0, 2.0]')\n    }\n  }\n\n  /**\n   * copy this Point relative to its position by the deltaX, deltaY displacement in cartesian space\n   * @param {number} deltaX is the increment to x coordinates to this Point\n   * @param {number} deltaY is the increment to y coordinates to this Point\n   * @returns {Point} a new Point object at the relative deltaX, deltaY displacement from original Point\n   */\n  copyRel (deltaX, deltaY) {\n    if ((isNumeric(deltaX)) && (isNumeric(deltaY))) {\n      let tmpPoint = Point.fromPoint(this)\n      tmpPoint.x = tmpPoint.x + deltaX\n      tmpPoint.y = tmpPoint.y + deltaY\n      return tmpPoint\n    } else {\n      throw new TypeError('copyRel needs deltaX and deltaY to be valid numbers !')\n    }\n  }\n\n  /**\n   * copy this Point relative to its position by the polar displacement in cartesian space\n   * @param {number} radius is the distance from origin to the point\n   * @param {number} theta is the angle from x axes origin to point in mathematical order Counter-Clockwise\n   * @param {Object} angleSystem your choice of one of AngularSystem Enum Radian, Degree or Gradians\n   * @returns {Point} a new Point at the polar displacement from original Point\n   */\n  copyRelPolar (radius, theta, angleSystem = AngularSystem.DEGREE) {\n    let tmpPoint = Point.fromPolar(radius, theta, angleSystem)\n    let tmpPoint2 = Point.fromPoint(this)\n    tmpPoint2.x = tmpPoint2.x + tmpPoint.x\n    tmpPoint2.y = tmpPoint2.y + tmpPoint.y\n    return tmpPoint2\n  }\n\n  /**\n   * allows to compare equality with otherPoint, they should have the same values for x and y\n   * Math.sqrt(2) * Math.sqrt(2) should give 2 but gives instead 2.0000000000000004\n   * Math.sqrt(3) * Math.sqrt(3) should give 2 but gives instead 2.9999999999999996\n   * i found\n   * So the Point Class equality should take this fact account to test near equality with EPSILON=0.0000000001\n   *  feel free to adapt EPSILON value to your needs in utils.js\n   * @param {Point} otherPoint\n   * @returns {boolean}\n   */\n  equal (otherPoint) {\n    if (otherPoint instanceof Point) {\n      return (\n        (Math.abs(this.x - otherPoint.x) <= EPSILON) &&\n        (Math.abs(this.y - otherPoint.y) <= EPSILON)\n      )\n    } else {\n      throw new TypeError('A Point can only be compared to another Point')\n    }\n  }\n\n  /**\n   * get the distance from this point to otherPoint\n   * @param {Point} otherPoint\n   * @return {Number}\n   */\n  distance (otherPoint) {\n    if (otherPoint instanceof Point) {\n      let distance = Math.sqrt(\n        ((this.x - otherPoint.x) * (this.x - otherPoint.x)) +\n        ((this.y - otherPoint.y) * (this.y - otherPoint.y))\n      )\n      if (distance <= EPSILON) {\n        return 0\n      } else {\n        return distance\n      }\n    } else {\n      throw new TypeError('Point.distance(otherPoint) expects a Point as parameter')\n    }\n  }\n}\n",
+    "content": "import {isNumeric, EPSILON, AngularSystem, getRadians, roundNumber, PRECISION} from './utils'\n\n// noinspection SpellCheckingInspection\n/**\n * Class representing  a point in 2 dimension cartesian space\n */\nexport default class Point {\n  /**\n   * Creates a point\n   * @param {number} x coordinates in cartesian space or array with [x, y] numbers\n   * @param {number} y coordinates in cartesian space, ignored if first argument is an array\n   */\n  constructor (x = 0, y = 0) {\n    // allow first argument to be an array if values in 2 first elements are numbers\n    if ((typeof x[0] === 'number') && (typeof x[1] === 'number')) {\n      // here i am using x and y attribute setter so that correct checks are done\n      this.x = x[0]\n      this.y = x[1]\n    } else {\n      // using x and y attribute setter\n      this.x = x\n      this.y = y\n    }\n  }\n\n  /**\n   * creates a new Point in cartesian space from polar coordinates\n   * @param {number} radius is the distance from origin to the point\n   * @param {number} theta is the angle from x axes origin to point in mathematical order Counter-Clockwise\n   * @param {Object} angleSystem your choice of one of AngularSystem Enum Radian, Degree or Gradians\n   * @returns {Point} a new Point(x,y) located at the given polar coordinates\n   */\n  static fromPolar (radius, theta, angleSystem = AngularSystem.DEGREE) {\n    if ((isNumeric(radius)) && (isNumeric(theta))) {\n      let angle = 0\n      if (angleSystem === AngularSystem.RADIAN) {\n        angle = theta\n      } else {\n        angle = getRadians(theta)\n      }\n      let tmpPoint = new Point()\n      tmpPoint._radius = radius\n      tmpPoint._theta = angle // we store angle in radians\n      const tmpX = radius * Math.cos(angle)\n      tmpPoint.x = Math.abs(tmpX) <= EPSILON ? 0 : roundNumber(tmpX, PRECISION)\n      const tmpY = radius * Math.sin(angle)\n      // noinspection JSSuspiciousNameCombination\n      tmpPoint.y = Math.abs(tmpY) <= EPSILON ? 0 : roundNumber(tmpY, PRECISION)\n      return tmpPoint\n    } else {\n      throw new TypeError('fromPolar needs radius and theta to be valid numbers !')\n    }\n  }\n\n  /**\n   * get a new Point that is a copy (clone) of the otherPoint passed has parameter\n   * @param {Point} otherPoint is the Point you want to copy\n   * @returns {Point} a new Point located at the same cartesian coordinates as otherPoint\n   */\n  static fromPoint (otherPoint) {\n    if (otherPoint instanceof Point) {\n      return new Point(otherPoint.x, otherPoint.y)\n    } else {\n      throw new TypeError('fromPoint needs parameter otherPoint of type Point')\n    }\n  }\n\n  /**\n   * Get the x value.\n   * @return {number} The x value.\n   */\n  get x () {\n    return this._x\n  }\n\n  /**\n   * Set the x value\n   * @param {number} value is the new numeric value for x\n   */\n  set x (value) {\n    if (isNumeric(value)) {\n      // noinspection JSCheckFunctionSignatures\n      this._x = parseFloat(value)\n    } else {\n      this._x = NaN\n      this.isInvalid = true\n      this.InvalidReason = `cannot set x to ${value} because it is not a numeric value`\n      throw new TypeError(`Point.x setter needs a numeric value and ${value} is not`)\n    }\n  }\n\n  /**\n   * Get the y value.\n   * @return {number} The y value.\n   */\n  get y () {\n    return this._y\n  }\n\n  /**\n   * Set the y value\n   * @param {number} value is the new numeric value for y\n   */\n  set y (value) {\n    if (isNumeric(value)) {\n      // noinspection JSCheckFunctionSignatures\n      this._y = parseFloat(value)\n    } else {\n      this._y = NaN\n      this.isInvalid = true\n      this.InvalidReason = `cannot set y to ${value} because it is not a numeric value`\n      throw new TypeError(`Point.y setter needs a numeric value and ${value} is not`)\n    }\n  }\n\n  /**\n   * give a string representation of this class instance\n   * @param {string} separator placed between x and y values ', ' by default\n   * @param {boolean} surroundingParenthesis allow to tell if result string should be surrounded with parenthesis (True by default)\n   * @param {number} precision defines the number of decimals for the coordinates (2 by default)\n   * @returns {string}\n   */\n  toString (separator = ',', surroundingParenthesis = true, precision = 2) {\n    if (surroundingParenthesis) {\n      return `(${roundNumber(this.x, precision)}${separator} ${roundNumber(this.y, 2)})`\n    } else {\n      return `${roundNumber(this.x, precision)}${separator} ${roundNumber(this.y, 2)}`\n    }\n  }\n\n  /**\n   * give an array representation of this Point class instance [x, y]\n   * @returns {Array} [x, y]\n   */\n  toArray () {\n    return [this.x, this.y]\n  }\n\n  /**\n   * give an OGC Well-known text (WKT) representation of this class instance\n   * https://en.wikipedia.org/wiki/Well-known_text\n   * @returns {string}\n   */\n  toWKT () {\n    return `POINT(${this.x} ${this.y})`\n  }\n\n  /**\n   * give an Postgis Extended Well-known text (EWKT) representation of this class instance\n   * https://postgis.net/docs/using_postgis_dbmanagement.html#EWKB_EWKT\n   * @param {number} srid is the Spatial reference systems identifier EPSG code default is 21781 for Switzerland MN03\n   * @returns {string}\n   */\n  toEWKT (srid = 21781) {\n    return `SRID=${srid};POINT(${this.x} ${this.y})`\n  }\n\n  // TO implement toEWKB I can maybe use this lib : https://github.com/cschwarz/wkx\n\n  /**\n   * give a GeoJSON (http://geojson.org/) representation of this class instance geometry\n   * @returns {string}\n   */\n  toGeoJSON () {\n    return `{\"type\":\"Point\",\"coordinates\":[${this.x},${this.y}]}`\n  }\n\n  /**\n   * will move this Point to the new position in cartesian space given by the arrCoordinates\n   * @param {Array} arrCoordinates is an array with the 2 cartesian coordinates [x, y]\n   * @returns {Point} return this instance of the object (to allow function chaining)\n   */\n  moveToArray (arrCoordinates) {\n    if ((isNumeric(arrCoordinates[0])) && (isNumeric(arrCoordinates[1]))) {\n      this.x = arrCoordinates[0]\n      this.y = arrCoordinates[1]\n      return this\n    } else {\n      throw new TypeError('moveToArray needs an array of 2 numbers like this [1.0, 2.0]')\n    }\n  }\n\n  /**\n   * will move this Point to the new position in cartesian space given by the newX and newY values\n   * @param {number} newX is the new x coordinates in cartesian space of this Point\n   * @param {number} newY is the new y coordinates in cartesian space of this Point\n   * @returns {Point} return this instance of the object (to allow function chaining)\n   */\n  moveTo (newX, newY) {\n    if ((isNumeric(newX)) && (isNumeric(newY))) {\n      this.x = newX\n      this.y = newY\n      return this\n    } else {\n      throw new TypeError('moveTo needs newX and newY to be valid numbers !')\n    }\n  }\n\n  /**\n   * move this Point relative to its position by the arrVector displacement in cartesian space\n   * @param {Array} arrVector is an array representing the vector displacement to apply to actual coordinates [deltaX, deltaY]\n   * @returns {Point} return this instance of the object (to allow function chaining)\n   */\n  moveRelArray (arrVector) {\n    if ((isNumeric(arrVector[0])) && (isNumeric(arrVector[1]))) {\n      this.x = this.x + arrVector[0]\n      this.y = this.y + arrVector[1]\n      return this\n    } else {\n      throw new TypeError('moveRelArray needs an array of 2 numbers like this [1.0, 2.0]')\n    }\n  }\n\n  /**\n   * move this Point relative to its position by the deltaX, deltaY displacement in cartesian space\n   * @param {number} deltaX is the new x coordinates in cartesian space of this Point\n   * @param {number} deltaY is the new y coordinates in cartesian space of this Point\n   * @returns {Point} return this instance of the object (to allow function chaining)\n   */\n  moveRel (deltaX, deltaY) {\n    if ((isNumeric(deltaX)) && (isNumeric(deltaY))) {\n      this.x = this.x + deltaX\n      this.y = this.y + deltaY\n      return this\n    } else {\n      throw new TypeError('moveRel needs deltaX and deltaY to be valid numbers !')\n    }\n  }\n\n  /**\n   * move this Point relative to its position by the polar displacement in cartesian space\n   * @param {number} radius is the distance from origin to the point\n   * @param {number} theta is the angle from x axes origin to point in mathematical order Counter-Clockwise\n   * @param {Object} angleSystem your choice of one of AngularSystem Enum Radian, Degree or Gradians\n   * @returns {Point} return this instance of the object (to allow function chaining)\n   */\n  moveRelPolar (radius, theta, angleSystem = AngularSystem.DEGREE) {\n    let tmpPoint = Point.fromPolar(radius, theta, angleSystem)\n    this.x = this.x + tmpPoint.x\n    this.y = this.y + tmpPoint.y\n    return this\n  }\n\n  /**\n   * copy this Point relative to its position by the arrVector displacement in cartesian space\n   * @param {Array} arrVector is an array representing the vector displacement to apply to actual coordinates [deltaX, deltaY]\n   * @returns {Point} a new Point object at the relative displacement arrVector from original Point\n   */\n  copyRelArray (arrVector) {\n    if ((isNumeric(arrVector[0])) && (isNumeric(arrVector[1]))) {\n      let tmpPoint = Point.fromPoint(this)\n      tmpPoint.x = tmpPoint.x + arrVector[0]\n      tmpPoint.y = tmpPoint.y + arrVector[1]\n      return tmpPoint\n    } else {\n      throw new TypeError('copyRelArray needs an array of 2 numbers like this [1.0, 2.0]')\n    }\n  }\n\n  /**\n   * copy this Point relative to its position by the deltaX, deltaY displacement in cartesian space\n   * @param {number} deltaX is the increment to x coordinates to this Point\n   * @param {number} deltaY is the increment to y coordinates to this Point\n   * @returns {Point} a new Point object at the relative deltaX, deltaY displacement from original Point\n   */\n  copyRel (deltaX, deltaY) {\n    if ((isNumeric(deltaX)) && (isNumeric(deltaY))) {\n      let tmpPoint = Point.fromPoint(this)\n      tmpPoint.x = tmpPoint.x + deltaX\n      tmpPoint.y = tmpPoint.y + deltaY\n      return tmpPoint\n    } else {\n      throw new TypeError('copyRel needs deltaX and deltaY to be valid numbers !')\n    }\n  }\n\n  /**\n   * copy this Point relative to its position by the polar displacement in cartesian space\n   * @param {number} radius is the distance from origin to the point\n   * @param {number} theta is the angle from x axes origin to point in mathematical order Counter-Clockwise\n   * @param {Object} angleSystem your choice of one of AngularSystem Enum Radian, Degree or Gradians\n   * @returns {Point} a new Point at the polar displacement from original Point\n   */\n  copyRelPolar (radius, theta, angleSystem = AngularSystem.DEGREE) {\n    let tmpPoint = Point.fromPolar(radius, theta, angleSystem)\n    let tmpPoint2 = Point.fromPoint(this)\n    tmpPoint2.x = tmpPoint2.x + tmpPoint.x\n    tmpPoint2.y = tmpPoint2.y + tmpPoint.y\n    return tmpPoint2\n  }\n\n  /**\n   * allows to compare equality with otherPoint, they should have the same values for x and y\n   * Math.sqrt(2) * Math.sqrt(2) should give 2 but gives instead 2.0000000000000004\n   * Math.sqrt(3) * Math.sqrt(3) should give 2 but gives instead 2.9999999999999996\n   * i found\n   * So the Point Class equality should take this fact account to test near equality with EPSILON=0.0000000001\n   *  feel free to adapt EPSILON value to your needs in utils.js\n   * @param {Point} otherPoint\n   * @returns {boolean}\n   */\n  equal (otherPoint) {\n    if (otherPoint instanceof Point) {\n      return (\n        (Math.abs(this.x - otherPoint.x) <= EPSILON) &&\n        (Math.abs(this.y - otherPoint.y) <= EPSILON)\n      )\n    } else {\n      throw new TypeError('A Point can only be compared to another Point')\n    }\n  }\n\n  /**\n   * get the distance from this point to otherPoint\n   * @param {Point} otherPoint\n   * @return {Number}\n   */\n  distance (otherPoint) {\n    if (otherPoint instanceof Point) {\n      let distance = Math.sqrt(\n        ((this.x - otherPoint.x) * (this.x - otherPoint.x)) +\n        ((this.y - otherPoint.y) * (this.y - otherPoint.y))\n      )\n      if (distance <= EPSILON) {\n        return 0\n      } else {\n        return distance\n      }\n    } else {\n      throw new TypeError('Point.distance(otherPoint) expects a Point as parameter')\n    }\n  }\n}\n",
     "static": true,
     "longname": "/home/cgil/WebstormProjects/cgil-geom2d/src/Point.js",
     "access": "public",
@@ -877,7 +1123,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 64,
+    "__docId__": 72,
     "kind": "class",
     "name": "Point",
     "memberof": "src/Point.js",
@@ -892,7 +1138,7 @@
     "interface": false
   },
   {
-    "__docId__": 65,
+    "__docId__": 73,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/Point.js~Point",
@@ -922,12 +1168,12 @@
         "spread": false,
         "optional": false,
         "name": "y",
-        "description": "coordinates in cartesian space"
+        "description": "coordinates in cartesian space, ignored if first argument is an array"
       }
     ]
   },
   {
-    "__docId__": 70,
+    "__docId__": 78,
     "kind": "method",
     "name": "fromPolar",
     "memberof": "src/Point.js~Point",
@@ -937,7 +1183,7 @@
     "longname": "src/Point.js~Point.fromPolar",
     "access": "public",
     "description": "creates a new Point in cartesian space from polar coordinates",
-    "lineNumber": 32,
+    "lineNumber": 33,
     "unknown": [
       {
         "tagName": "@returns",
@@ -986,7 +1232,7 @@
     }
   },
   {
-    "__docId__": 71,
+    "__docId__": 79,
     "kind": "method",
     "name": "fromPoint",
     "memberof": "src/Point.js~Point",
@@ -995,8 +1241,8 @@
     "static": true,
     "longname": "src/Point.js~Point.fromPoint",
     "access": "public",
-    "description": "get a new Point that is a copy of the otherPoint passed has parameter",
-    "lineNumber": 59,
+    "description": "get a new Point that is a copy (clone) of the otherPoint passed has parameter",
+    "lineNumber": 60,
     "unknown": [
       {
         "tagName": "@returns",
@@ -1025,7 +1271,7 @@
     }
   },
   {
-    "__docId__": 72,
+    "__docId__": 80,
     "kind": "get",
     "name": "x",
     "memberof": "src/Point.js~Point",
@@ -1035,7 +1281,7 @@
     "longname": "src/Point.js~Point#x",
     "access": "public",
     "description": "Get the x value.",
-    "lineNumber": 71,
+    "lineNumber": 72,
     "return": {
       "nullable": null,
       "types": [
@@ -1051,7 +1297,7 @@
     }
   },
   {
-    "__docId__": 73,
+    "__docId__": 81,
     "kind": "set",
     "name": "x",
     "memberof": "src/Point.js~Point",
@@ -1061,7 +1307,7 @@
     "longname": "src/Point.js~Point#x",
     "access": "public",
     "description": "Set the x value",
-    "lineNumber": 79,
+    "lineNumber": 80,
     "params": [
       {
         "nullable": null,
@@ -1076,7 +1322,7 @@
     ]
   },
   {
-    "__docId__": 74,
+    "__docId__": 82,
     "kind": "member",
     "name": "_x",
     "memberof": "src/Point.js~Point",
@@ -1084,7 +1330,7 @@
     "longname": "src/Point.js~Point#_x",
     "access": "private",
     "description": null,
-    "lineNumber": 82,
+    "lineNumber": 83,
     "undocument": true,
     "type": {
       "types": [
@@ -1093,7 +1339,7 @@
     }
   },
   {
-    "__docId__": 76,
+    "__docId__": 84,
     "kind": "member",
     "name": "isInvalid",
     "memberof": "src/Point.js~Point",
@@ -1101,7 +1347,7 @@
     "longname": "src/Point.js~Point#isInvalid",
     "access": "public",
     "description": null,
-    "lineNumber": 85,
+    "lineNumber": 86,
     "undocument": true,
     "type": {
       "types": [
@@ -1110,7 +1356,7 @@
     }
   },
   {
-    "__docId__": 77,
+    "__docId__": 85,
     "kind": "member",
     "name": "InvalidReason",
     "memberof": "src/Point.js~Point",
@@ -1118,7 +1364,7 @@
     "longname": "src/Point.js~Point#InvalidReason",
     "access": "public",
     "description": null,
-    "lineNumber": 86,
+    "lineNumber": 87,
     "undocument": true,
     "type": {
       "types": [
@@ -1127,7 +1373,7 @@
     }
   },
   {
-    "__docId__": 78,
+    "__docId__": 86,
     "kind": "get",
     "name": "y",
     "memberof": "src/Point.js~Point",
@@ -1137,7 +1383,7 @@
     "longname": "src/Point.js~Point#y",
     "access": "public",
     "description": "Get the y value.",
-    "lineNumber": 95,
+    "lineNumber": 96,
     "return": {
       "nullable": null,
       "types": [
@@ -1153,7 +1399,7 @@
     }
   },
   {
-    "__docId__": 79,
+    "__docId__": 87,
     "kind": "set",
     "name": "y",
     "memberof": "src/Point.js~Point",
@@ -1163,7 +1409,7 @@
     "longname": "src/Point.js~Point#y",
     "access": "public",
     "description": "Set the y value",
-    "lineNumber": 103,
+    "lineNumber": 104,
     "params": [
       {
         "nullable": null,
@@ -1178,7 +1424,7 @@
     ]
   },
   {
-    "__docId__": 80,
+    "__docId__": 88,
     "kind": "member",
     "name": "_y",
     "memberof": "src/Point.js~Point",
@@ -1186,7 +1432,7 @@
     "longname": "src/Point.js~Point#_y",
     "access": "private",
     "description": null,
-    "lineNumber": 106,
+    "lineNumber": 107,
     "undocument": true,
     "type": {
       "types": [
@@ -1195,7 +1441,7 @@
     }
   },
   {
-    "__docId__": 84,
+    "__docId__": 92,
     "kind": "method",
     "name": "toString",
     "memberof": "src/Point.js~Point",
@@ -1205,7 +1451,7 @@
     "longname": "src/Point.js~Point#toString",
     "access": "public",
     "description": "give a string representation of this class instance",
-    "lineNumber": 122,
+    "lineNumber": 123,
     "unknown": [
       {
         "tagName": "@returns",
@@ -1254,7 +1500,7 @@
     }
   },
   {
-    "__docId__": 85,
+    "__docId__": 93,
     "kind": "method",
     "name": "toArray",
     "memberof": "src/Point.js~Point",
@@ -1263,12 +1509,12 @@
     "static": false,
     "longname": "src/Point.js~Point#toArray",
     "access": "public",
-    "description": "give an array representation of this class instance",
-    "lineNumber": 134,
+    "description": "give an array representation of this Point class instance [x, y]",
+    "lineNumber": 135,
     "unknown": [
       {
         "tagName": "@returns",
-        "tagValue": "{Array}"
+        "tagValue": "{Array} [x, y]"
       }
     ],
     "return": {
@@ -1277,12 +1523,12 @@
         "Array"
       ],
       "spread": false,
-      "description": ""
+      "description": "[x, y]"
     },
     "params": []
   },
   {
-    "__docId__": 86,
+    "__docId__": 94,
     "kind": "method",
     "name": "toWKT",
     "memberof": "src/Point.js~Point",
@@ -1292,7 +1538,7 @@
     "longname": "src/Point.js~Point#toWKT",
     "access": "public",
     "description": "give an OGC Well-known text (WKT) representation of this class instance\nhttps://en.wikipedia.org/wiki/Well-known_text",
-    "lineNumber": 143,
+    "lineNumber": 144,
     "unknown": [
       {
         "tagName": "@returns",
@@ -1310,7 +1556,7 @@
     "params": []
   },
   {
-    "__docId__": 87,
+    "__docId__": 95,
     "kind": "method",
     "name": "toEWKT",
     "memberof": "src/Point.js~Point",
@@ -1320,7 +1566,7 @@
     "longname": "src/Point.js~Point#toEWKT",
     "access": "public",
     "description": "give an Postgis Extended Well-known text (EWKT) representation of this class instance\nhttps://postgis.net/docs/using_postgis_dbmanagement.html#EWKB_EWKT",
-    "lineNumber": 153,
+    "lineNumber": 154,
     "unknown": [
       {
         "tagName": "@returns",
@@ -1349,7 +1595,7 @@
     }
   },
   {
-    "__docId__": 88,
+    "__docId__": 96,
     "kind": "method",
     "name": "toGeoJSON",
     "memberof": "src/Point.js~Point",
@@ -1359,7 +1605,7 @@
     "longname": "src/Point.js~Point#toGeoJSON",
     "access": "public",
     "description": "give a GeoJSON (http://geojson.org/) representation of this class instance geometry",
-    "lineNumber": 163,
+    "lineNumber": 164,
     "unknown": [
       {
         "tagName": "@returns",
@@ -1377,7 +1623,7 @@
     "params": []
   },
   {
-    "__docId__": 89,
+    "__docId__": 97,
     "kind": "method",
     "name": "moveToArray",
     "memberof": "src/Point.js~Point",
@@ -1387,7 +1633,7 @@
     "longname": "src/Point.js~Point#moveToArray",
     "access": "public",
     "description": "will move this Point to the new position in cartesian space given by the arrCoordinates",
-    "lineNumber": 172,
+    "lineNumber": 173,
     "unknown": [
       {
         "tagName": "@returns",
@@ -1416,7 +1662,7 @@
     }
   },
   {
-    "__docId__": 92,
+    "__docId__": 100,
     "kind": "method",
     "name": "moveTo",
     "memberof": "src/Point.js~Point",
@@ -1426,7 +1672,7 @@
     "longname": "src/Point.js~Point#moveTo",
     "access": "public",
     "description": "will move this Point to the new position in cartesian space given by the newX and newY values",
-    "lineNumber": 188,
+    "lineNumber": 189,
     "unknown": [
       {
         "tagName": "@returns",
@@ -1465,7 +1711,7 @@
     }
   },
   {
-    "__docId__": 95,
+    "__docId__": 103,
     "kind": "method",
     "name": "moveRelArray",
     "memberof": "src/Point.js~Point",
@@ -1475,7 +1721,7 @@
     "longname": "src/Point.js~Point#moveRelArray",
     "access": "public",
     "description": "move this Point relative to its position by the arrVector displacement in cartesian space",
-    "lineNumber": 203,
+    "lineNumber": 204,
     "unknown": [
       {
         "tagName": "@returns",
@@ -1504,7 +1750,7 @@
     }
   },
   {
-    "__docId__": 98,
+    "__docId__": 106,
     "kind": "method",
     "name": "moveRel",
     "memberof": "src/Point.js~Point",
@@ -1514,7 +1760,7 @@
     "longname": "src/Point.js~Point#moveRel",
     "access": "public",
     "description": "move this Point relative to its position by the deltaX, deltaY displacement in cartesian space",
-    "lineNumber": 219,
+    "lineNumber": 220,
     "unknown": [
       {
         "tagName": "@returns",
@@ -1553,7 +1799,7 @@
     }
   },
   {
-    "__docId__": 101,
+    "__docId__": 109,
     "kind": "method",
     "name": "moveRelPolar",
     "memberof": "src/Point.js~Point",
@@ -1563,7 +1809,7 @@
     "longname": "src/Point.js~Point#moveRelPolar",
     "access": "public",
     "description": "move this Point relative to its position by the polar displacement in cartesian space",
-    "lineNumber": 236,
+    "lineNumber": 237,
     "unknown": [
       {
         "tagName": "@returns",
@@ -1612,7 +1858,7 @@
     }
   },
   {
-    "__docId__": 104,
+    "__docId__": 112,
     "kind": "method",
     "name": "copyRelArray",
     "memberof": "src/Point.js~Point",
@@ -1622,7 +1868,7 @@
     "longname": "src/Point.js~Point#copyRelArray",
     "access": "public",
     "description": "copy this Point relative to its position by the arrVector displacement in cartesian space",
-    "lineNumber": 248,
+    "lineNumber": 249,
     "unknown": [
       {
         "tagName": "@returns",
@@ -1651,7 +1897,7 @@
     }
   },
   {
-    "__docId__": 105,
+    "__docId__": 113,
     "kind": "method",
     "name": "copyRel",
     "memberof": "src/Point.js~Point",
@@ -1661,7 +1907,7 @@
     "longname": "src/Point.js~Point#copyRel",
     "access": "public",
     "description": "copy this Point relative to its position by the deltaX, deltaY displacement in cartesian space",
-    "lineNumber": 265,
+    "lineNumber": 266,
     "unknown": [
       {
         "tagName": "@returns",
@@ -1700,7 +1946,7 @@
     }
   },
   {
-    "__docId__": 106,
+    "__docId__": 114,
     "kind": "method",
     "name": "copyRelPolar",
     "memberof": "src/Point.js~Point",
@@ -1710,7 +1956,7 @@
     "longname": "src/Point.js~Point#copyRelPolar",
     "access": "public",
     "description": "copy this Point relative to its position by the polar displacement in cartesian space",
-    "lineNumber": 283,
+    "lineNumber": 284,
     "unknown": [
       {
         "tagName": "@returns",
@@ -1759,7 +2005,7 @@
     }
   },
   {
-    "__docId__": 107,
+    "__docId__": 115,
     "kind": "method",
     "name": "equal",
     "memberof": "src/Point.js~Point",
@@ -1769,7 +2015,7 @@
     "longname": "src/Point.js~Point#equal",
     "access": "public",
     "description": "allows to compare equality with otherPoint, they should have the same values for x and y\nMath.sqrt(2) * Math.sqrt(2) should give 2 but gives instead 2.0000000000000004\nMath.sqrt(3) * Math.sqrt(3) should give 2 but gives instead 2.9999999999999996\ni found\nSo the Point Class equality should take this fact account to test near equality with EPSILON=0.0000000001\n feel free to adapt EPSILON value to your needs in utils.js",
-    "lineNumber": 301,
+    "lineNumber": 302,
     "unknown": [
       {
         "tagName": "@returns",
@@ -1798,7 +2044,7 @@
     }
   },
   {
-    "__docId__": 108,
+    "__docId__": 116,
     "kind": "method",
     "name": "distance",
     "memberof": "src/Point.js~Point",
@@ -1808,7 +2054,7 @@
     "longname": "src/Point.js~Point#distance",
     "access": "public",
     "description": "get the distance from this point to otherPoint",
-    "lineNumber": 317,
+    "lineNumber": 318,
     "params": [
       {
         "nullable": null,
@@ -1831,10 +2077,10 @@
     }
   },
   {
-    "__docId__": 109,
+    "__docId__": 117,
     "kind": "file",
     "name": "src/__tests___/Line.spec.js",
-    "content": "/* eslint-disable no-unused-vars */\n// noinspection NpmUsedModulesInstalled\nimport Point from '../Point'\nimport Line from '../Line'\n\n// noinspection Annotator\ndescribe('Line.js module', () => {\n  const L0 = new Line()\n  const P0 = new Point()\n  const P1 = new Point(1.0, 2.0)\n  const L1 = new Line(P0, P1)\n\n  describe('Line constructor', () => {\n    test(\n      'constructor with default parameters should return an instance of Line',\n      () => {\n        expect(L0)\n          .toBeInstanceOf(Line)\n      })\n    test(\n      'constructor with default parameters should have startPoint of type Point',\n      () => {\n        expect(L0)\n          .toHaveProperty('startPoint') && expect(L0.startPoint)\n          .toBeInstanceOf(Point)\n      })\n    test(\n      'constructor with default parameters should return endPoint of type Point',\n      () => {\n        expect(L0)\n          .toHaveProperty('endPoint') && expect(L0.endPoint)\n          .toBeInstanceOf(Point)\n      })\n    test('new Line(P0, P1) should return an instance of Line', () => {\n      expect(L1)\n        .toBeInstanceOf(Line)\n    })\n    test('should give back startPoint property correctly', () => {\n      expect(L1)\n        .toHaveProperty('startPoint', P0)\n    })\n    test('should give back endPoint property correctly', () => {\n      expect(L1)\n        .toHaveProperty('endPoint', P1)\n    })\n    const badValue = 'realWrongXValue'\n    const wrongPoint = new Point()\n    try {\n      // noinspection JSValidateTypes\n      wrongPoint.x = badValue\n    } catch (e) {\n      // console.log(e)\n      // to allow doing this test without throwing the error for the Point\n    }\n    test('constructor should throw an error if invalid startPoint', () => {\n      expect(function () {\n        const LineWrong = new Line(wrongPoint, P1)\n      }).toThrow('Class Line needs a valid startPoint')\n    })\n    test('constructor should throw an error if invalid endPoint', () => {\n      expect(function () {\n        const LineWrong = new Line(P0, wrongPoint)\n      }).toThrow('Class Line needs a valid endPoint')\n    })\n    test('constructor should throw an error if startPoint equals endPoint', () => {\n      expect(function () {\n        const LineWrong = new Line(P1, P1)\n      }).toThrow('Class Line needs a endPoint different from startPoint')\n    })\n  })\n\n  describe('Line startPoint and endPoint accessors', () => {\n    const L2 = new Line()\n    L2.startPoint = P0\n    L2.endPoint = P1\n    const badValue = 'wrongXValue'\n    const wrongPoint = new Point()\n    try {\n      wrongPoint.x = badValue\n    } catch (e) {\n      // console.log(e)\n      // to allow doing this test without throwing the error for the Point\n    }\n    test('should allow to set startPoint correctly', () => {\n      expect(L2)\n        .toHaveProperty('startPoint', P0)\n    })\n    test('should allow to set endPoint correctly', () => {\n      expect(L2)\n        .toHaveProperty('endPoint', P1)\n    })\n    test('should throw an error if endPoint is not of type Point', () => {\n      expect(function () {\n        const LineWrong = new Line(P1, [1, 0])\n      }).toThrow('endPoint setter needs parameter otherPoint of type Point')\n    })\n    test('should throw an error if startPoint is not of type Point', () => {\n      expect(function () {\n        // noinspection JSCheckFunctionSignatures\n        const LineWrong = new Line([1, 0], P1)\n      }).toThrow('startPoint setter needs parameter otherPoint of type Point')\n    })\n    test('should throw an error if invalid startPoint', () => {\n      expect(function () {\n        const LineWrong = new Line(wrongPoint, P1)\n      }).toThrow('Class Line needs a valid startPoint')\n    })\n    test('should throw an error if invalid endPoint', () => {\n      expect(function () {\n        const LineWrong = new Line(P0, wrongPoint)\n      }).toThrow('Class Line needs a valid endPoint')\n    })\n    test('should throw an error if startPoint setter receives point equals endPoint', () => {\n      expect(function () {\n        L2.startPoint = P1\n      }).toThrow('Class Line needs a startPoint different from endPoint')\n    })\n    test('should throw an error if endPoint setter receives point equals startPoint', () => {\n      expect(function () {\n        L2.endPoint = P0\n      }).toThrow('Class Line needs a endPoint different from startPoint')\n    })\n    test('should assign startPoint by value (copy)', () => {\n      const POrigin = new Point()\n      const L3 = new Line(POrigin, P1)\n      const POriginCopy = POrigin.copyRel(0, 0)\n      POrigin.moveTo(10, 20)\n      expect(L3)\n        .toHaveProperty('startPoint', POriginCopy)\n    })\n    test('should assign endPoint by value (copy)', () => {\n      const POrigin = new Point()\n      const L3 = new Line(P1, POrigin)\n      const POriginCopy = POrigin.copyRel(0, 0)\n      POrigin.moveTo(10, 20)\n      expect(L3)\n        .toHaveProperty('endPoint', POriginCopy)\n    })\n  })\n\n  describe('Line.toString()', () => {\n    test('should return a correct string representation', () => {\n      expect(L1.toString())\n        .toEqual(`Line(${P0.toString()} -> ${P1.toString()})`)\n    })\n  })\n\n  describe('Line.getLength()', () => {\n    test('should return the correct length of the line', () => {\n      const Pa = new Point(1, 1)\n      const Pb = new Point(5, 4) // sqrt((4²)+(3²)) = sqrt(16 + 9) = sqrt(25) = 5\n      const LLength = new Line(Pa, Pb)\n      expect(LLength.getLength())\n        .toEqual(5)\n    })\n  })\n})\n",
+    "content": "/* eslint-disable no-unused-vars */\n// noinspection NpmUsedModulesInstalled\nimport Point from '../Point'\nimport Line from '../Line'\n\n// noinspection Annotator\ndescribe('Line.js module', () => {\n  const L0 = new Line()\n  const P0 = new Point()\n  const P1 = new Point(1.0, 2.0)\n  const L1 = new Line(P0, P1)\n\n  describe('Line constructor', () => {\n    test(\n      'constructor with default parameters should return an instance of Line',\n      () => {\n        expect(L0)\n          .toBeInstanceOf(Line)\n      })\n    test(\n      'constructor with default parameters should have startPoint of type Point',\n      () => {\n        expect(L0)\n          .toHaveProperty('startPoint') && expect(L0.startPoint)\n          .toBeInstanceOf(Point)\n      })\n    test(\n      'constructor with default parameters should return endPoint of type Point',\n      () => {\n        expect(L0)\n          .toHaveProperty('endPoint') && expect(L0.endPoint)\n          .toBeInstanceOf(Point)\n      })\n    test('new Line(P0, P1) should return an instance of Line', () => {\n      expect(L1)\n        .toBeInstanceOf(Line)\n    })\n    test('should give back startPoint property correctly', () => {\n      expect(L1)\n        .toHaveProperty('startPoint', P0)\n    })\n    test('should give back endPoint property correctly', () => {\n      expect(L1)\n        .toHaveProperty('endPoint', P1)\n    })\n    const badValue = 'realWrongXValue'\n    const wrongPoint = new Point()\n    try {\n      // noinspection JSValidateTypes\n      wrongPoint.x = badValue\n    } catch (e) {\n      // console.log(e)\n      // to allow doing this test without throwing the error for the Point\n    }\n    test('constructor should throw an error if invalid startPoint', () => {\n      expect(function () {\n        const LineWrong = new Line(wrongPoint, P1)\n      }).toThrow('Class Line needs a valid startPoint')\n    })\n    test('constructor should throw an error if invalid endPoint', () => {\n      expect(function () {\n        const LineWrong = new Line(P0, wrongPoint)\n      }).toThrow('Class Line needs a valid endPoint')\n    })\n    test('constructor should throw an error if startPoint equals endPoint', () => {\n      expect(function () {\n        const LineWrong = new Line(P1, P1)\n      }).toThrow('Class Line needs a endPoint different from startPoint')\n    })\n  })\n\n  describe('Line.fromLine(otherLine)', () => {\n    const L2 = Line.fromLine(L1)\n    test('should throw an Error when parameter is not a valid Line', () => {\n      expect(Line.fromLine.bind(undefined, [])).toThrow(TypeError, 'fromLine needs parameter otherLine of type Line')\n    })\n    test('should have identical start and end points', () => {\n      expect(L2.startPoint.equal(L1.startPoint)).toBe(true)\n      expect(L2.endPoint.equal(L1.endPoint)).toBe(true)\n    })\n    test('should copy Points by value in the new Line', () => {\n      L2.startPoint.moveTo(1.0, 1.0)\n      expect(L2.startPoint.equal(new Point(1.0, 1.0))).toBe(true)\n      expect(L2.startPoint.equal(L1.startPoint)).toBe(false)\n      expect(L1.startPoint.equal(new Point())).toBe(true)\n      expect(P0.equal(new Point())).toEqual(true)\n    })\n  })\n\n  describe('Line startPoint and endPoint accessors', () => {\n    const L2 = new Line()\n    L2.startPoint = P0\n    L2.endPoint = P1\n    const badValue = 'wrongXValue'\n    const wrongPoint = new Point()\n    try {\n      wrongPoint.x = badValue\n    } catch (e) {\n      // console.log(e)\n      // to allow doing this test without throwing the error for the Point\n    }\n    test('should allow to set startPoint correctly', () => {\n      expect(L2)\n        .toHaveProperty('startPoint', P0)\n    })\n    test('should allow to set endPoint correctly', () => {\n      expect(L2)\n        .toHaveProperty('endPoint', P1)\n    })\n    test('should throw an error if endPoint is not of type Point', () => {\n      expect(function () {\n        const LineWrong = new Line(P1, [1, 0])\n      }).toThrow('endPoint setter needs parameter otherPoint of type Point')\n    })\n    test('should throw an error if startPoint is not of type Point', () => {\n      expect(function () {\n        // noinspection JSCheckFunctionSignatures\n        const LineWrong = new Line([1, 0], P1)\n      }).toThrow('startPoint setter needs parameter otherPoint of type Point')\n    })\n    test('should throw an error if invalid startPoint', () => {\n      expect(function () {\n        const LineWrong = new Line(wrongPoint, P1)\n      }).toThrow('Class Line needs a valid startPoint')\n    })\n    test('should throw an error if invalid endPoint', () => {\n      expect(function () {\n        const LineWrong = new Line(P0, wrongPoint)\n      }).toThrow('Class Line needs a valid endPoint')\n    })\n    test('should throw an error if startPoint setter receives point equals endPoint', () => {\n      expect(function () {\n        L2.startPoint = P1\n      }).toThrow('Class Line needs a startPoint different from endPoint')\n    })\n    test('should throw an error if endPoint setter receives point equals startPoint', () => {\n      expect(function () {\n        L2.endPoint = P0\n      }).toThrow('Class Line needs a endPoint different from startPoint')\n    })\n    test('should assign startPoint by value (copy)', () => {\n      const POrigin = new Point()\n      const L3 = new Line(POrigin, P1)\n      const POriginCopy = POrigin.copyRel(0, 0)\n      POrigin.moveTo(10, 20)\n      expect(L3)\n        .toHaveProperty('startPoint', POriginCopy)\n    })\n    test('should assign endPoint by value (copy)', () => {\n      const POrigin = new Point()\n      const L3 = new Line(P1, POrigin)\n      const POriginCopy = POrigin.copyRel(0, 0)\n      POrigin.moveTo(10, 20)\n      expect(L3)\n        .toHaveProperty('endPoint', POriginCopy)\n    })\n  })\n\n  describe('Line.toString()', () => {\n    test('should return a correct string representation', () => {\n      expect(L1.toString())\n        .toEqual(`Line(${P0.toString()} -> ${P1.toString()})`)\n    })\n  })\n\n  describe('Line.toArray allows to get back array [[x1,y1],[x2,y2]]', () => {\n    const tmpLineArray = L1.toArray()\n    test('should return an array', () => {\n      expect(tmpLineArray).toBeInstanceOf(Array)\n    })\n    test('should copy the startPoint value correctly in the array', () => {\n      expect(tmpLineArray[0]).toEqual([0, 0])\n    })\n    test('should copy the endPoint value correctly in the array', () => {\n      expect(tmpLineArray[1]).toEqual([1.0, 2.0])\n    })\n  })\n\n  describe('Line can be exported to OGC and Postgis', () => {\n    test(\n      'toWKT should return a correct OGC Well-known text (WKT) representation',\n      () => {\n        expect(L1.toWKT()).toEqual(`LINESTRING(${L1.startPoint.x} ${L1.startPoint.y}, ${L1.endPoint.x} ${L1.endPoint.y})`)\n      }\n    )\n    test(\n      'toEWKT should return a correct Postgis Extended Well-known text (EWKT) representation',\n      () => {\n        const srid = 21781\n        expect(L1.toEWKT()).toEqual(`SRID=${srid};LINESTRING(${L1.startPoint.x} ${L1.startPoint.y}, ${L1.endPoint.x} ${L1.endPoint.y})`)\n      }\n    )\n    test(\n      'toGeoJSON should return a correct GeoJSON (http://geojson.org/) representation',\n      () => {\n        expect(L1.toGeoJSON()).toEqual(`{\"type\":\"LineString\",\"coordinates\":[[${L1.startPoint.x},${L1.startPoint.y}],[${L1.endPoint.x},${L1.endPoint.y}]]}`)\n      }\n    )\n  })\n\n  describe('Line.getLength()', () => {\n    test('should return the correct length of the line', () => {\n      const Pa = new Point(1, 1)\n      const Pb = new Point(5, 4) // sqrt((4²)+(3²)) = sqrt(16 + 9) = sqrt(25) = 5\n      const LLength = new Line(Pa, Pb)\n      expect(LLength.getLength())\n        .toEqual(5)\n    })\n  })\n\n  describe('Line.getSlope()', () => {\n    const POrigin = new Point() // 0,0 implicit\n    const LHorizontal = new Line(POrigin, new Point(5, 0))\n    test('Slope for Line(POrigin, (5, 0))should equal 0 (horizontal line at origin)', () => {\n      expect(LHorizontal.getSlope()).toEqual(0)\n    })\n    test('Slope for Line((1,2), (3, 2))should should equal  0 (horizontal line)', () => {\n      expect(new Line(new Point(1, 2), new Point(3, 2)).getSlope()).toEqual(0)\n    })\n    test('Slope for Line((1,1), (2, 2))should return 1 (45deg line)', () => {\n      expect(new Line(new Point(1, 1), new Point(2, 2)).getSlope()).toEqual(1)\n    })\n    test('Slope for Line((1,1), (2, 0))should return 1 (-45deg line)', () => {\n      expect(new Line(new Point(1, 1), new Point(2, 0)).getSlope()).toEqual(-1)\n    })\n    test('Slope for Line((1,1), (2, 0))should return Infinity (vertical line)', () => {\n      expect(new Line(new Point(1, 1), new Point(1, 2)).getSlope()).toEqual(Infinity)\n    })\n    test('Slope for Line((0.3,0.2), (1.6, 0.5))should return Infinity (vertical line)', () => {\n      expect(new Line(new Point(0.3, 0.2), new Point(1.6, 0.5)).getSlope()).toBeCloseTo(0.23076923, 8)\n    })\n  })\n\n  describe('Line.getYintercept()', () => {\n    const POrigin = new Point() // 0,0 implicit\n    const LHorizontal = new Line(POrigin, new Point(5, 0))\n    test('YIntercept for Line(POrigin, (5, 0))should equal 0 (horizontal line at origin)', () => {\n      expect(LHorizontal.getYIntercept()).toEqual(0)\n    })\n    test('YIntercept for Line((1,2), (3, 2))should should equal  0 (horizontal line)', () => {\n      expect(new Line(new Point(1, 2), new Point(3, 2)).getYIntercept()).toEqual(2)\n    })\n    test('YIntercept for Line((1,1), (2, 2))should return 1 (45deg line)', () => {\n      expect(new Line(new Point(1, 1), new Point(2, 2)).getYIntercept()).toEqual(0)\n    })\n    test('YIntercept for Line((1,1), (2, 0))should return 1 (-45deg line)', () => {\n      expect(new Line(new Point(1, 1), new Point(2, 0)).getYIntercept()).toEqual(2)\n    })\n    test('YIntercept for Line((1,1), (2, 0))should return Infinity (vertical line)', () => {\n      expect(new Line(new Point(1, 1), new Point(1, 2)).getYIntercept()).toEqual(NaN)\n    })\n    test('YIntercept for Line((0.3,0.2), (1.6, 0.5))should return Infinity (vertical line)', () => {\n      expect(new Line(new Point(0.3, 0.2), new Point(1.6, 0.5)).getYIntercept()).toBeCloseTo(0.13076923, 8)\n    })\n  })\n})\n",
     "static": true,
     "longname": "/home/cgil/WebstormProjects/cgil-geom2d/src/__tests___/Line.spec.js",
     "access": "public",
@@ -1842,7 +2088,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 110,
+    "__docId__": 118,
     "kind": "file",
     "name": "src/__tests___/Point.spec.js",
     "content": "// noinspection NpmUsedModulesInstalled\n/* eslint-disable no-unused-expressions */\nimport Point from '../Point'\nimport {AngularSystem} from '../utils'\n\n// noinspection Annotator\ndescribe('Point.js module', () => {\n  const P0 = new Point()\n  const P1 = new Point(1.0, 2.0)\n  describe('Point constructor', () => {\n    test(\n      'constructor with default parameters should return an instance of Point',\n      () => {\n        expect(P0).toBeInstanceOf(Point)\n      }\n    )\n    test('constructor with default parameters should have x = 0', () => {\n      expect(P0).toHaveProperty('x', 0)\n    })\n    test('constructor with default parameters should return y = 0', () => {\n      expect(P0).toHaveProperty('y', 0)\n    })\n    const P1 = new Point(1.0, 2.0)\n    test('new Point(1.0, 2.0) should return an instance of Point', () => {\n      expect(P1).toBeInstanceOf(Point)\n    })\n    test(\n      'should allow new Point(\"1.12345689\") with a x as string number and y=0 implicit',\n      () => {\n        // noinspection JSCheckFunctionSignatures\n        const P3 = new Point('1.12345689') // y=0 implicitly\n        expect(P3).toHaveProperty('x', 1.12345689)\n        expect(P3).toHaveProperty('y', 0)\n      }\n    )\n\n    test('should allow to set y to a valid string number value correctly', () => {\n      // noinspection JSCheckFunctionSignatures\n      const P3 = new Point('1.12345689') // y=0 implicitly\n      P3.y = '-1.123456789'\n      expect(P3).toHaveProperty('y', -1.123456789)\n    })\n    test(\n      'should allow to construct a new Point from an array of 2 numbers ',\n      () => {\n        try {\n          // noinspection JSCheckFunctionSignatures\n          const PointFromArray = new Point([1.0, 2.0])\n          expect(PointFromArray).toHaveProperty('x', 1.0)\n          expect(PointFromArray).toHaveProperty('y', 2.0)\n        } catch (e) {\n          console.log('## ERROR trying to construct new Point([1.0, 2.0])')\n        }\n      }\n    )\n  })\n\n  describe('Point x,y accessors ', () => {\n    test('should give back x value correctly', () => {\n      expect(P1).toHaveProperty('x', 1.0)\n    })\n    test('should give back y value correctly', () => {\n      expect(P1).toHaveProperty('y', 2.0)\n    })\n    const P2 = new Point()\n    P2.x = 3.0\n    P2.y = 4.0\n    test('should allow to set x value correctly', () => {\n      expect(P2).toHaveProperty('x', 3.0)\n    })\n    test('should allow to set y value correctly', () => {\n      expect(P2).toHaveProperty('y', 4.0)\n    })\n  })\n\n  describe('Point refuses wrong values for x and y', () => {\n    let PWrong = new Point()\n    const badX = 'l25' // this is not a numeric value\n    const badY = 'one'\n    test('should throw an Error if invalid point x coordinate is given ', () => {\n      expect(function () {\n        const PointWithXWrong = new Point()\n        PointWithXWrong.x = badX\n      }).toThrow('Point.x setter needs a numeric value')\n    })\n    try {\n      PWrong.y = badY\n    } catch (e) {\n      // console.log(`PWrong.y = ${badY} throws `, e)\n    }\n    test(\n      'should set Point.isInvalid to true when given incorrect x or y value ', () => {\n        expect(PWrong).toHaveProperty('isInvalid', true)\n      })\n    test(\n      'should set Point.InvalidReason to string when given incorrect x or y value ',\n      () => {\n        expect(PWrong).toHaveProperty('InvalidReason', `cannot set y to ${badY} because it is not a numeric value`)\n      }\n    )\n    test('should set X to NaN when given incorrect x value ', () => {\n      try {\n        PWrong.x = badX\n      } catch (e) {\n        // to allow doing this test without throwing the error\n      }\n      expect(PWrong.x).toBe(NaN)\n    })\n    test('should set Y to NaN when given incorrect x value ', () => {\n      expect(PWrong.y).toBe(NaN)\n    })\n  })\n\n  describe('Point.fromPolar(radius, theta)', () => {\n    test('should throw an Error when no parameters are passed', () => {\n      expect(Point.fromPolar.bind(undefined, [])).toThrow(TypeError, 'fromPolar needs radius and theta to be valid numbers !')\n    })\n    test('should give a Point(0,0) when radius=0', () => {\n      const P1 = Point.fromPolar(0, 45)\n      expect(P1.equal(new Point())).toEqual(true)\n    })\n    test(\n      'should give a Point(0,5) when radius=5 and theta=Pi/2 radians',\n      () => {\n        const P1 = Point.fromPolar(5, Math.PI / 2, AngularSystem.RADIAN)\n        expect(P1.equal(new Point(0, 5))).toEqual(true)\n      }\n    )\n  })\n\n  describe('Point.fromPoint(otherPoint)', () => {\n    test('should throw an Error when parameter is not a valid Point', () => {\n      expect(Point.fromPoint.bind(undefined, [])).toThrow(TypeError, 'fromPoint needs parameter otherPoint of type Point')\n    })\n    test('should give a Point(0,0) when given new Point()', () => {\n      const P1 = Point.fromPoint(new Point())\n      expect(P1.equal(new Point())).toEqual(true)\n    })\n    test('should copy x,y values in the new point', () => {\n      const P1 = new Point(5.3, 2.1)\n      expect(P1.equal(new Point(5.3, 2.1))).toEqual(true)\n    })\n  })\n\n  describe('Point.toString()', () => {\n    test('should return a correct string representation', () => {\n      expect(P1.toString()).toEqual(`(${1.0}, ${2.0})`)\n    })\n    test('should return a string  without parenthesis when surroundingParenthesis is false', () => {\n      expect(P1.toString(',', false)).toEqual(`${1.0}, ${2.0}`)\n    })\n  })\n\n  describe('Point.toArray allows to get back array [x,y]', () => {\n    const arrPoint = P1.toArray()\n    test('should return an array', () => {\n      expect(arrPoint).toBeInstanceOf(Array)\n    })\n    test('should copy the x value correctly in the array', () => {\n      expect(arrPoint[0]).toEqual(1.0)\n    })\n    test('should copy the y value correctly in the array', () => {\n      expect(arrPoint[1]).toEqual(2.0)\n    })\n  })\n\n  describe('Point can be exported to OGC and Postgis', () => {\n    test(\n      'toWKT should return a correct OGC Well-known text (WKT) representation',\n      () => {\n        expect(P1.toWKT()).toEqual(`POINT(${P1.x} ${P1.y})`)\n      }\n    )\n    test(\n      'toEWKT should return a correct Postgis Extended Well-known text (EWKT) representation',\n      () => {\n        const srid = 21781\n        expect(P1.toEWKT()).toEqual(`SRID=${srid};POINT(${P1.x} ${P1.y})`)\n      }\n    )\n    test(\n      'toGeoJSON should return a correct GeoJSON (http://geojson.org/) representation',\n      () => {\n        expect(P1.toGeoJSON()).toEqual(`{\"type\":\"Point\",\"coordinates\":[${P1.x},${P1.y}]}`)\n      }\n    )\n  })\n\n  describe('Point.js equals equality operator', () => {\n    const P1bis = new Point(1, 2)\n    const P2 = new Point(2, 1)\n    test(\n      'should throw an error when equals(otherPoint) with otherPoint is not an instance of Point',\n      () => {\n        expect(P1.equal.bind(P1, [1.0, 2.0])).toThrow(TypeError, 'A Point can only be compared to another Point')\n      }\n    )\n    test(\n      'should return true when comparing two Points with default constructor',\n      () => {\n        const P0 = new Point()\n        const P0bis = new Point()\n        expect(P0.equal(P0bis)).toEqual(true)\n      }\n    )\n    test(\n      'should return true when comparing two Points that have identical values',\n      () => {\n        expect(P1.equal(P1bis)).toEqual(true)\n      }\n    )\n    test(\n      'should return true when comparing two Points that have nearly identical values',\n      () => {\n        const P0 = new Point(2, 3)\n        // Math.sqrt(2) * Math.sqrt(2) should give 2 but gives instead 2.0000000000000004\n        // Math.sqrt(3) * Math.sqrt(3) should give 2 but gives instead 2.9999999999999996\n        // Point Class equality should test near equality with EPSILON\n        const P0FloatError = new Point((Math.sqrt(2) * Math.sqrt(2)), Math.sqrt(3) * Math.sqrt(3))\n        expect(P0.equal(P0FloatError)).toEqual(true)\n      }\n    )\n    test(\n      'should return false when comparing two Points that have identical values',\n      () => {\n        expect(P1.equal(P2)).toEqual(false)\n      }\n    )\n  })\n\n  describe('Point can be moved', () => {\n    test(\n      'moveToArray should throw a TypeError when parameters are not numbers',\n      () => {\n        expect(P0.moveToArray.bind(P0, ['a', 1])).toThrow(TypeError, 'moveToArray needs an array of 2 numbers like this [1.0, 2.0]')\n      }\n    )\n    test('moveToArray should move correctly x and y', () => {\n      expect(P0.moveToArray([1.0, 2.0]).equal(P1)).toEqual(true)\n    })\n    test('moveTo should throw a TypeError when parameters are not numbers', () => {\n      expect(P0.moveTo.bind(P0, ['x', 1])).toThrow(TypeError, 'moveTo needs newX and newY to be valid numbers !')\n    })\n    test('moveTo should move correctly x and y', () => {\n      expect(P0.moveTo(1.0, 2.0).equal(P1)).toEqual(true)\n    })\n    test(\n      'moveRelArray should throw a TypeError when parameters are not numbers',\n      () => {\n        expect(P0.moveRelArray.bind(P0, ['a', 1])).toThrow(TypeError, 'moveRelArray needs an array of 2 numbers like this [1.0, 2.0]')\n      }\n    )\n    test('moveRelArray should move x and y by the vector displacement', () => {\n      const P0 = new Point(1.0, 1.0)\n      const P1 = new Point(2.0, 3.0)\n      expect(P0.moveRelArray([1.0, 2.0]).equal(P1)).toEqual(true)\n    })\n    test(\n      'moveRel should throw a TypeError when parameters are not numbers',\n      () => {\n        expect(P0.moveRel.bind(P0, ['a', 1])).toThrow(TypeError, 'moveRel needs deltaX and deltaY to be valid numbers !')\n      }\n    )\n    test('moveRel should move correctly x and y', () => {\n      const P0 = new Point(1.0, 1.0)\n      const P1 = new Point(2.0, 3.0)\n      expect(P0.moveRel(1.0, 2.0).equal(P1)).toEqual(true)\n    })\n    test(\n      'moveRelPolar should throw a TypeError when parameters are not numbers',\n      () => {\n        expect(P0.moveRelPolar.bind(P0, ['a', 1])).toThrow(TypeError, 'fromPolar needs radius and theta to be valid numbers !')\n      }\n    )\n    test('moveRelPolar should move correctly x and y', () => {\n      const P0 = new Point(1.0, 0.0)\n      const P1 = new Point(1.0, 3.0)\n      expect(P0.moveRelPolar(3.0, 90).equal(P1)).toEqual(true)\n    })\n  })\n\n  describe('Point can be copied', () => {\n    test(\n      'copyRelArray should throw a TypeError when parameters are not numbers',\n      () => {\n        expect(P0.copyRelArray.bind(P0, ['a', 1])).toThrow(TypeError, 'copyRelArray needs an array of 2 numbers like this [1.0, 2.0]')\n      }\n    )\n    test('copyRelArray should return an instance of Point', () => {\n      expect(P0.copyRelArray([1.0, 2.0])).toBeInstanceOf(Point)\n    })\n    test('copyRelArray should move x and y by the vector displacement', () => {\n      const P0 = new Point(1.0, 1.0)\n      const P1 = new Point(2.0, 3.0)\n      expect(P0.copyRelArray([1.0, 2.0]).equal(P1)).toEqual(true)\n    })\n\n    test(\n      'copyRel should throw a TypeError when parameters are not numbers',\n      () => {\n        expect(P0.copyRel.bind(P0, ['a', 1])).toThrow(TypeError, 'copyRel needs deltaX and deltaY to be valid numbers !')\n      }\n    )\n    test('copyRel should return an instance of Point', () => {\n      expect(P0.copyRel(1.0, 2.0)).toBeInstanceOf(Point)\n    })\n    test('copyRel should move correctly x and y', () => {\n      const P0 = new Point(1.0, 1.0)\n      const P1 = new Point(2.0, 3.0)\n      expect(P0.copyRel(1.0, 2.0).equal(P1)).toEqual(true)\n    })\n\n    test(\n      'copyRelPolar should throw a TypeError when parameters are not numbers',\n      () => {\n        expect(P0.copyRelPolar.bind(P0, ['a', 1])).toThrow(TypeError, 'fromPolar needs radius and theta to be valid numbers !')\n      }\n    )\n    test('copyRelPolar should return an instance of Point', () => {\n      expect(P0.copyRelPolar(1.0, 2.0)).toBeInstanceOf(Point)\n    })\n    test('copyRelPolar should copy correctly x and y', () => {\n      const P0 = new Point(1.0, 0.0)\n      const P1 = new Point(1.0, 3.0)\n      expect(P0.copyRelPolar(3.0, 90).equal(P1)).toEqual(true)\n    })\n  })\n\n  describe('Point.js distance method ', () => {\n    const P1bis = new Point(1, 2)\n    test(\n      'should throw an error when distance(otherPoint) with otherPoint is not an instance of Point',\n      () => {\n        expect(P1.distance.bind(P1, [1.0, 2.0])).toThrow(TypeError, 'Point.distance(otherPoint) expects a Point as parameter')\n      }\n    )\n    test(\n      'should return zero when getting distance from two Points with default constructor',\n      () => {\n        const P0 = new Point()\n        const P0bis = new Point()\n        expect(P0.distance(P0bis)).toEqual(0)\n      }\n    )\n    test(\n      'should return zero when getting distance from two Points that have identical values',\n      () => {\n        expect(P1.distance(P1bis)).toEqual(0)\n      }\n    )\n    test(\n      'should return zero when getting distance from two Points that have nearly identical values',\n      () => {\n        const P0 = new Point(2, 3)\n        // Math.sqrt(2) * Math.sqrt(2) should give 2 but gives instead 2.0000000000000004\n        // Math.sqrt(3) * Math.sqrt(3) should give 3 but gives instead 2.9999999999999996\n        // Point Class equality should test near equality with EPSILON\n        const P0FloatError = new Point((Math.sqrt(2) * Math.sqrt(2)), Math.sqrt(3) * Math.sqrt(3))\n        expect(P0.distance(P0FloatError)).toEqual(0)\n      }\n    )\n    test(\n      'should return 5 when getting distance from two Points that have identical values',\n      () => {\n        const Pa = new Point(1, 1)\n        const Pb = new Point(5, 4) // sqrt((4²)+(3²)) = sqrt(16 + 9) = sqrt(25) = 5\n        expect(Pa.distance(Pb)).toEqual(5)\n      }\n    )\n  })\n})\n",
@@ -1853,7 +2099,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 111,
+    "__docId__": 119,
     "kind": "file",
     "name": "src/__tests___/ccw.spec.js",
     "content": "// noinspection NpmUsedModulesInstalled\n/* eslint-disable no-unused-expressions */\nimport Point from '../Point'\nimport {ccw} from '../ccw'\n\n// noinspection Annotator\ndescribe('ccw.js module', () => {\n  const PA = new Point(3, 9)\n  const PB = new Point(11, 1)\n  const PC = new Point(6, 8)\n  const PD = new Point(4, 3)\n  test(\n    'should throw an error when any parameter is not an instance of Point',\n    () => {\n      expect(ccw.bind(P1, [1.0, 2.0])).toThrow(TypeError, 'ccw(P0, P1, P2) expects all parameters to be from Point class')\n    }\n  )\n  test(\n    'ccw(PA, PB, PC) should return Object : {\\'counterClockwise\\': true, \\'allPointsAreColinear\\': false, \\'value\\': 1}',\n    () => {\n      expect(ccw(PA, PB, PC)).toMatchObject({'counterClockwise': true, 'allPointsAreColinear': false, 'value': 1})\n    }\n  )\n  test(\n    'ccw(PA, PB, PD) should return Object : {\\'counterClockwise\\': false, \\'allPointsAreColinear\\': false, \\'value\\': -1}',\n    () => {\n      expect(ccw(PA, PB, PD)).toMatchObject({'counterClockwise': false, 'allPointsAreColinear': false, 'value': -1})\n    }\n  )\n  // testing simple case from origin\n  test(\n    'ccw(P(0,0), P(2,0), P(2,3)) should return Object : {\\'counterClockwise\\': true, \\'allPointsAreColinear\\': false, \\'value\\': 1}',\n    () => {\n      expect(ccw(new Point(), new Point(2.0, 0), new Point(2.0, 3.0))).toMatchObject({'counterClockwise': true, 'allPointsAreColinear': false, 'value': 1})\n    }\n  )\n  test(\n    'ccw(P(0,0), P(2,0), P(2,-3)) should return Object : {\\'counterClockwise\\': false, \\'allPointsAreColinear\\': false, \\'value\\': -1}',\n    () => {\n      expect(ccw(new Point(), new Point(2.0, 0), new Point(2.0, -3.0))).toMatchObject({'counterClockwise': false, 'allPointsAreColinear': false, 'value': -1})\n    }\n  )\n  test(\n    'ccw(P(0,0), P(2,0), P(4,0.0)) should return Object : {\\'counterClockwise\\': true, \\'allPointsAreColinear\\': true, \\'value\\': 1}',\n    () => {\n      expect(ccw(new Point(), new Point(2.0, 0), new Point(4.0, 0.0))).toMatchObject({'counterClockwise': true, 'allPointsAreColinear': true, 'value': 1})\n    }\n  )\n  test(\n    'ccw(P(0,0), P(4,0.0), P(2,0)) should return Object : {\\'counterClockwise\\': false, \\'allPointsAreColinear\\': true, \\'value\\': 0}',\n    () => {\n      expect(ccw(new Point(), new Point(4.0, 0.0), new Point(2.0, 0))).toMatchObject({'counterClockwise': false, 'allPointsAreColinear': true, 'value': 0})\n    }\n  )\n  test(\n    'ccw(P(2,0), P(0,0), P(4,0.0)) should return Object : {\\'counterClockwise\\': false, \\'allPointsAreColinear\\': true, \\'value\\': -1}',\n    () => {\n      expect(ccw(new Point(2.0, 0), new Point(), new Point(4.0, 0.0))).toMatchObject({'counterClockwise': false, 'allPointsAreColinear': true, 'value': -1})\n    }\n  )\n  // testing extreme case where some or all points are identical\n  const POrigin = new Point()\n  test(\n    'ccw(P(0,0), P(0,0), P(0,0.0)) should throw an error when any points are identical here : P0 and P1 are identical',\n    () => {\n      expect(ccw.bind(undefined, POrigin, POrigin, POrigin)).toThrow('PointCcwPointIdenticalException ==> P0 and P1 are identical')\n    }\n  )\n  test(\n    'ccw(P(2,2), P(4,4), P(2,2.0)) should throw an error when any points are identical here : P0 and P2 are identical',\n    () => {\n      expect(ccw.bind(undefined, new Point(2, 2), new Point(4, 4), new Point(2, 2.0))).toThrow('PointCcwPointIdenticalException ==> P0 and P2 are identical')\n    }\n  )\n  test(\n    'ccw(P(0,0), P(2,2), P(2,2.0)) should throw an error when any points are identical here : P1 and P2 are identical',\n    () => {\n      expect(ccw.bind(undefined, new Point(0, 0), new Point(2, 2), new Point(2, 2.0))).toThrow('PointCcwPointIdenticalException ==> P1 and P2 are identical')\n    }\n  )\n  const P0 = new Point(1, 1)\n  const P1 = new Point(2, 2)\n  const P2 = new Point(3, 3)\n  test(\n    'ccw(P0, P2, P1) should return {\\'counterClockwise\\': false, \\'allPointsAreColinear\\': true, \\'value\\': 0} when P0,P1 and P2 are colinear and P1 is between P0 and P2',\n    () => {\n      expect(ccw(P0, P2, P1)).toMatchObject({'counterClockwise': false, 'allPointsAreColinear': true, 'value': 0})\n    }\n  )\n  test(\n    'ccw(P1, P0, P2) should return {\\'counterClockwise\\': false, \\'allPointsAreColinear\\': true, \\'value\\': -1} when P0,P1 and P2 are colinear and P1 is between P0 and P2',\n    () => {\n      expect(ccw(P1, P0, P2)).toMatchObject({'counterClockwise': false, 'allPointsAreColinear': true, 'value': -1})\n    }\n  )\n  test(\n    'ccw(P0, P1, P2) should return {\\'counterClockwise\\': true, \\'allPointsAreColinear\\': true, \\'value\\': 1} when  P0,P1 and P2 are colinear and P1 is between P0 and P2',\n    () => {\n      expect(ccw(P0, P1, P2)).toMatchObject({'counterClockwise': true, 'allPointsAreColinear': true, 'value': 1})\n    }\n  )\n  const PF1 = new Point(0, 0.3) // testing robustness when having float values\n  const PF2 = new Point(1, 0.6)\n  const PF3 = new Point(2, 0.9)\n  test(\n    'ccw(PF1, PF3, PF2) should return {\\'counterClockwise\\': false, \\'allPointsAreColinear\\': true, \\'value\\': 0} when P1,P2 and P3 are colinear and P2 is between P1 and P3',\n    () => {\n      expect(ccw(PF1, PF3, PF2)).toMatchObject({'counterClockwise': false, 'allPointsAreColinear': true, 'value': 0})\n    }\n  )\n  test(\n    'ccw(PF2, PF1, PF3) should return {\\'counterClockwise\\': false, \\'allPointsAreColinear\\': true, \\'value\\': -1} when P1,P2 and P3 are colinear and P2 is between P1 and P3',\n    () => {\n      expect(ccw(PF2, PF1, PF3)).toMatchObject({'counterClockwise': false, 'allPointsAreColinear': true, 'value': -1})\n    }\n  )\n  test(\n    'ccw(PF1, PF2, PF3) should return {\\'counterClockwise\\': true, \\'allPointsAreColinear\\': true, \\'value\\': 1} when  P1,P2 and P3 are colinear and P2 is between P1 and P3',\n    () => {\n      expect(ccw(PF1, PF2, PF3)).toMatchObject({'counterClockwise': true, 'allPointsAreColinear': true, 'value': 1})\n    }\n  )\n})\n",
@@ -1864,7 +2110,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 112,
+    "__docId__": 120,
     "kind": "file",
     "name": "src/__tests___/index.spec.js",
     "content": "import * as geom2d from '../index'\nimport Point from '../Point'\nimport Line from '../Line'\ndescribe('geom2d index.js module', () => {\n  test('it should export Point Class', () => {\n    expect(new geom2d.Point()).toBeInstanceOf(Point)\n  })\n  test('it should export Line Class', () => {\n    expect(new geom2d.Line()).toBeInstanceOf(Line)\n  })\n})\n",
@@ -1875,7 +2121,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 113,
+    "__docId__": 121,
     "kind": "file",
     "name": "src/__tests___/utils.spec.js",
     "content": "// noinspection NpmUsedModulesInstalled\nimport * as U from '../utils'\n\n// noinspection Annotator\ndescribe('utils.js module', () => {\n  describe('isNumeric should allow to check for valid number', () => {\n    test('isNumeric should be a function', () => {\n      expect(typeof U.isNumeric).toBe('function')\n    })\n    test('isNumeric(1.0) should return true', () => {\n      expect(U.isNumeric(1.0)).toEqual(true)\n    })\n    test('isNumeric(0) should return true', () => {\n      expect(U.isNumeric(0)).toEqual(true)\n    })\n    test('isNumeric(\"2.0\") should return true', () => {\n      expect(U.isNumeric('2.0')).toEqual(true)\n    })\n    test('isNumeric(\"1.0E5\") should return true', () => {\n      expect(U.isNumeric('1.0E5')).toEqual(true)\n    })\n    test('isNumeric(\"dad\") should return false', () => {\n      expect(U.isNumeric('dad')).toEqual(false)\n    })\n    test('isNumeric(\" \") should return false', () => {\n      expect(U.isNumeric(' ')).toEqual(false)\n    })\n  })\n\n  describe('getRadians(angle) should convert angles in degrees correctly', () => {\n    test('getRadians(180, degree) should give PI', () => {\n      expect(U.getRadians(180, U.AngularSystem.DEGREE)).toEqual(Math.PI)\n    })\n    test('getRadians(180) should imply second parameter as should give PI', () => {\n      expect(U.getRadians(180)).toEqual(Math.PI)\n    })\n    test('getRadians(PI, radian) should give PI', () => {\n      expect(U.getRadians(Math.PI, U.AngularSystem.RADIAN)).toEqual(Math.PI)\n    })\n    test('getRadians(200, gradian) should give PI', () => {\n      expect(U.getRadians(200, U.AngularSystem.GRADIAN)).toBeCloseTo(Math.PI, U.EPSILON)\n    })\n  })\n  describe('getDegrees(angle) should convert angles in degrees correctly', () => {\n    test('getDegrees(180, degree) should give 180', () => {\n      expect(U.getDegrees(180, U.AngularSystem.DEGREE)).toEqual(180)\n    })\n    test('getDegrees(PI, radian) should give 180', () => {\n      expect(U.getDegrees(Math.PI, U.AngularSystem.RADIAN)).toEqual(180)\n    })\n    test('getDegrees(Pi) should imply second parameter as Radian should give 180', () => {\n      expect(U.getDegrees(Math.PI)).toEqual(180)\n    })\n    test('getDegrees(200 in gradians) should give 180', () => {\n      expect(U.getDegrees(200, U.AngularSystem.GRADIAN)).toEqual(180)\n    })\n  })\n  describe('getGradians(angle) should convert angles in degrees correctly', () => {\n    test('getGradians(Pi/2 in radians) should give 100', () => {\n      expect(U.getGradians(Math.PI / 2.0, U.AngularSystem.RADIAN)).toEqual(100)\n    })\n    test('getGradians(270 in degrees) should give 300', () => {\n      expect(U.getGradians(270, U.AngularSystem.DEGREE)).toEqual(300)\n    })\n    test('getGradians(270) should imply degrees as default second parameter) should give 300', () => {\n      expect(U.getGradians(270)).toEqual(300)\n    })\n    test('getGradians(37 in gradians) should give 37', () => {\n      expect(U.getGradians(37, U.AngularSystem.GRADIAN)).toEqual(37)\n    })\n  })\n  describe('fixDec should give a float value rounded to DIGITIZE_PRECISION', () => {\n    test('fixDec(Math.sqrt(2) * Math.sqrt(2)) should give 2 ', () => {\n      expect(U.fixDec(Math.sqrt(2) * Math.sqrt(2))).toEqual(2)\n    })\n  })\n  describe('roundNumber should give a float value rounded to PRECISION', () => {\n    test('fixDec(Math.sqrt(2) * Math.sqrt(2)) should give 2 ', () => {\n      expect(U.roundNumber(Math.sqrt(2) * Math.sqrt(2))).toEqual(2)\n    })\n  })\n  describe('roundNumber should give a float value rounded to PRECISION', () => {\n    test('fixDec(Math.sqrt(2) * Math.sqrt(2)) should give 2 ', () => {\n      expect(U.roundNumber(1 / 3, 2)).toEqual(0.33)\n    })\n  })\n})\n",
@@ -1886,7 +2132,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 114,
+    "__docId__": 122,
     "kind": "file",
     "name": "src/ccw.js",
     "content": "import {EPSILON} from './utils'\nimport Point from './Point'\n\n// noinspection FunctionTooLongJS\n/** ccw allows to know if traveling from P0 to P1 to P2 we turn counterclockwise\n *  assuming we are in cartesian space where X is directed to right and Y axis goes up\n *  and assuming the 3 points are distinct points\n *  if any points are identical ccw wil trow an error\n * from p. 350 of Book : Algorithms in C++ by Robert Sedgewick Addison-Wesley ISBN 0-201-51059-6\n * here are some examples :\n * Point.ccw(P(0,0), P(2,0), P(2,3)) // should return this Object :\n * {'counterClockwise': true, 'allPointsAreColinear': false, 'value': 1}\n *\n * Point.ccw(PP(0,0), P(2,0), P(2,-3)) // should return this Object :\n * {'counterClockwise': false, 'allPointsAreColinear': false, 'value': -1}\n *\n * let {counterClockwise, allPointsAreColinear, value} = Point.ccw(Point(0, 0.3), Point(1, 0.6), Point(2, 0.9))\n * will give you 'counterClockwise': true, 'allPointsAreColinear': true, 'value': 1\n * have a look on my unit test in Point.spec.js for more examples\n * @param {Point} P0\n * @param {Point} P1\n * @param {Point} P2\n * @return {Object} 1 when turn is counterclockwise, -1 if not, and 0 when P2 colinear in segment between P0 and P1\n */\nexport const ccw = function (P0, P1, P2) {\n  if ((P0 instanceof Point) && (P1 instanceof Point) && (P2 instanceof Point)) {\n    let result = { counterClockwise: null, allPointsAreColinear: null, value: null }\n    const dx1 = P1.x - P0.x\n    const dx2 = P2.x - P0.x\n    const dy1 = P1.y - P0.y\n    const dy2 = P2.y - P0.y\n    console.log(`### IN Point.ccw(P0 = ${P0.toString()}, P1 = ${P1.toString()}, P2 = ${P2.toString()})`)\n    console.log(`dx1 = ${dx1}, dx2 = ${dx2}, dy1 = ${dy1}, dy2 = ${dy2}`)\n    if ((Math.abs(dx1) <= EPSILON) && (Math.abs(dy1) <= EPSILON)) {\n      console.log('ERROR ==> P0 and P1 are identical !')\n      throw new Error('PointCcwPointIdenticalException ==> P0 and P1 are identical')\n    }\n    if ((Math.abs(dx2) <= EPSILON) && (Math.abs(dy2) <= EPSILON)) {\n      console.log('ERROR ==> P0 and P2 are identical !')\n      throw new Error('PointCcwPointIdenticalException ==> P0 and P2 are identical')\n    }\n    if (P1.equal(P2)) {\n      console.log('ERROR ==> P1 and P2 are identical !')\n      throw new Error('PointCcwPointIdenticalException ==> P1 and P2 are identical')\n    }\n    const CPa = dx1 * dy2 // first term of \"CrossProduct\" or signed magnitude of 3d cross product vector with z=0\n    const CPb = dy1 * dx2 // second term of CrossProduct or signed magnitude\n    console.log(`Cpa = (dx1 * dy2) = ${CPa}, CPb = dy1 * dx2 = ${CPb}`)\n    if (Math.abs(CPa - CPb) <= EPSILON) { // colinear cases (epsilon test is here to handle float errors)\n      console.log(`==> ALL 3 POINTS ARE COLINEAR because = (Cpa - CPb) <= EPSILON `)\n      result.allPointsAreColinear = true\n      if (((dx1 * dx2) < 0) || ((dy1 * dy2) < 0)) {\n        result.counterClockwise = false\n        result.value = -1\n        console.log(`==> And P0 is between P1->P2`)\n      } else {\n        if ((dx1 * dx1 + dy1 * dy1) < (dx2 * dx2 + dy2 * dy2)) {\n          result.counterClockwise = true\n          result.value = 1\n          console.log(`==> And P1 is between P0->P2`)\n        } else {\n          result.counterClockwise = false\n          result.value = 0\n          console.log(`==> And P2 is between P0->P1`)\n        }\n      }\n    } else {\n      result.allPointsAreColinear = false\n      if (CPa > CPb) {\n        result.counterClockwise = true\n        result.value = 1\n        console.log(`=> From P0->P1->P2 we turn counter-clockwise`)\n      } else {\n        result.counterClockwise = false\n        result.value = -1\n        console.log(`=> From P0->P1->P2 we turn clockwise`)\n      }\n    }\n    return result\n  } else {\n    console.log('ERROR ==> P0,P1 and P2 SHOULD be of type Point class !')\n    throw new TypeError('Point.ccw(P0, P1, P2) expects all parameters to be from Point class')\n  }\n}\n",
@@ -1897,7 +2143,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 115,
+    "__docId__": 123,
     "kind": "function",
     "name": "ccw",
     "memberof": "src/ccw.js",
@@ -1953,7 +2199,7 @@
     }
   },
   {
-    "__docId__": 116,
+    "__docId__": 124,
     "kind": "file",
     "name": "src/index.js",
     "content": "import Point from './Point'\nimport Line from './Line'\nimport * as utils from './utils'\nexport {Point, Line, utils}\n",
@@ -1964,7 +2210,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 117,
+    "__docId__": 125,
     "kind": "file",
     "name": "src/utils.js",
     "content": "export const isNumeric = (n) => (!isNaN(parseFloat(n)) && isFinite(n))\nexport const PRECISION = 10\nexport const EPSILON = Number(`1e-${PRECISION}`) // 1e-10 or 0.0000000001\nexport const DIGITIZE_PRECISION = 2 // cm is enough in EPSG:21781\nexport const AngularSystem = Object.freeze({\n  RADIAN: {\n    id: 0,\n    max: 2 * Math.PI\n  },\n  DEGREE: {\n    id: 1,\n    max: 360\n  },\n  GRADIAN: {\n    id: 2,\n    max: 400\n  }\n})\n\nexport const getRadians = (angle, angleSystem = AngularSystem.DEGREE) => angle * (AngularSystem.RADIAN.max / angleSystem.max)\nexport const getDegrees = (angle, angleSystem = AngularSystem.RADIAN) => angle * (AngularSystem.DEGREE.max / angleSystem.max)\nexport const getGradians = (angle, angleSystem = AngularSystem.DEGREE) => angle * (AngularSystem.GRADIAN.max / angleSystem.max)\n\n/**\n * Rounds number  to a given decimal precision\n *\n * @param {(number|string)} num\n * @param {number} precision display precision\n * @return {number}\n */\nexport function roundNumber (num, precision = PRECISION) {\n  let pair = (num + 'e').split('e')\n  let value = Math.round(Number(pair[0] + 'e' + (+pair[1] + precision)))\n  pair = (value + 'e').split('e')\n  return Number(pair[0] + 'e' + (+pair[1] - precision))\n}\n\nexport const fixDec = (n) => parseFloat(Number(n).toFixed(DIGITIZE_PRECISION))\n",
@@ -1975,7 +2221,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 118,
+    "__docId__": 126,
     "kind": "function",
     "name": "isNumeric",
     "memberof": "src/utils.js",
@@ -2001,7 +2247,7 @@
     "return": null
   },
   {
-    "__docId__": 119,
+    "__docId__": 127,
     "kind": "variable",
     "name": "PRECISION",
     "memberof": "src/utils.js",
@@ -2021,7 +2267,7 @@
     }
   },
   {
-    "__docId__": 120,
+    "__docId__": 128,
     "kind": "variable",
     "name": "EPSILON",
     "memberof": "src/utils.js",
@@ -2041,7 +2287,7 @@
     }
   },
   {
-    "__docId__": 121,
+    "__docId__": 129,
     "kind": "variable",
     "name": "DIGITIZE_PRECISION",
     "memberof": "src/utils.js",
@@ -2061,7 +2307,7 @@
     }
   },
   {
-    "__docId__": 122,
+    "__docId__": 130,
     "kind": "variable",
     "name": "AngularSystem",
     "memberof": "src/utils.js",
@@ -2081,7 +2327,7 @@
     }
   },
   {
-    "__docId__": 123,
+    "__docId__": 131,
     "kind": "function",
     "name": "getRadians",
     "memberof": "src/utils.js",
@@ -2114,7 +2360,7 @@
     "return": null
   },
   {
-    "__docId__": 124,
+    "__docId__": 132,
     "kind": "function",
     "name": "getDegrees",
     "memberof": "src/utils.js",
@@ -2147,7 +2393,7 @@
     "return": null
   },
   {
-    "__docId__": 125,
+    "__docId__": 133,
     "kind": "function",
     "name": "getGradians",
     "memberof": "src/utils.js",
@@ -2180,7 +2426,7 @@
     "return": null
   },
   {
-    "__docId__": 126,
+    "__docId__": 134,
     "kind": "function",
     "name": "roundNumber",
     "memberof": "src/utils.js",
@@ -2227,7 +2473,7 @@
     }
   },
   {
-    "__docId__": 127,
+    "__docId__": 135,
     "kind": "function",
     "name": "fixDec",
     "memberof": "src/utils.js",
@@ -2254,7 +2500,7 @@
   },
   {
     "kind": "index",
-    "content": "# cgil-geom2d\na light 2d geometry utility classes like Point, Line written in ES6 Javascript (~12k for the CommonJS lib).\n\n[![Build Status](https://travis-ci.org/lao-tseu-is-alive/cgil-2dgeom.png?branch=master)](https://travis-ci.org/lao-tseu-is-alive/cgil-2dgeom)\n[![Coverage](https://img.shields.io/codecov/c/github/lao-tseu-is-alive/cgil-2dgeom/master.svg)](https://codecov.io/gh/lao-tseu-is-alive/cgil-2dgeom)\n[![Coverage Status](https://coveralls.io/repos/github/lao-tseu-is-alive/cgil-2dgeom/badge.svg?branch=master)](https://coveralls.io/github/lao-tseu-is-alive/cgil-2dgeom?branch=master)\n[![HitCount](http://hits.dwyl.io/lao-tseu-is-alive/cgil-2dgeom.svg)](http://hits.dwyl.io/lao-tseu-is-alive/cgil-2dgeom)\n\nthis code is licensed under the terms of the MIT License.\n\n## Using it inside the browser\nyou can download the UMD library [file dist/geom2d.min.js](https://raw.githubusercontent.com/lao-tseu-is-alive/cgil-2dgeom/master/dist/geom2d.min.js)\ndirecty to your computer \nthen you just need to include it as usual (adapting the path to your case):\n```html\n<script src=\"dist/geom2d.min.js\"></script>\n```\nyou can see an example above \n\nyou can get a nice explanation for the various library formats in [this medium article](https://medium.com/computed-comparisons/commonjs-vs-amd-vs-requirejs-vs-es6-modules-2e814b114a0b)\n\nbut very basically \n - cjs (commonjs2): You will use this format in a build tool, it excludes all modules in node_modules folder from bundled files.\n - umd: You will use this format directly in browser, all 3rd-party packages (dependencies) will be bundled within.\n\n\n## Installation with npm\n\nInside an already created npm project directory (do you have a package.json in it ?) \nyou can as usual install `cgil-geom2d` in the shell with :\n\n```bash\nnpm install cgil-geom2d --save\n```\n\nthen you can import/require the CommonJS bundle in **dist/geom2d.cjs.js** \n\n\n## Example\nlet's use the library Point class to create a nice 12 petal's flowers using a polar equation like this : \n**r = a sin 6θ**\n\n[Jump to the full example file](https://lao-tseu-is-alive.github.io/cgil-2dgeom/docs/example_UMD.html)\n\n![alt text](https://raw.githubusercontent.com/lao-tseu-is-alive/cgil-2dgeom/master/docs/images/cgil-geom2d_12_petals_flower_example.png \"Using the geom2d.Point class to create a nice 12 petal's flowers from a polar equation\")\n\n```html\n<script src=\"../dist/geom2d.min.js\"></script>\n<svg height=\"500\" width=\"500\">\n  <line  id='xaxis' x1=\"250\" y1=\"0\" x2=\"250\" y2=\"500\" style=\"stroke:rgb(255,255,255);stroke-width:2\" />\n  <line  id='yaxis' x1=\"0\" y1=\"250\" x2=\"500\" y2=\"250\" style=\"stroke:rgb(255,255,255);stroke-width:2\" />  \n  <polyline id='mypolargraph' points=\"0,40 40,40 40,80 80,80 80,120 120,120 120,160\"  style=\"fill:white;stroke:red;stroke-width:4\" />\n  <circle cx=\"250\" cy=\"250\" r=\"40\" stroke=\"orange\" stroke-width=\"1\" fill=\"yellow\" />\n</svg>\n```\n\n```javascript\n  let ElPolyPolarGraph = document.getElementById('mypolargraph')\n  let petalLength = 200\n  let coordinatesString = '' // to accumulate the points coordinates\n  // let's center the drawing on the svg\n  const offsetX = 250 \n  const offsetY = 250\n  // let's iterate over a full 360 degree circle\n  for (let angle = 0; angle < 360; angle += 2) {\n        let radius = petalLength * Math.sin(6 * geom2d.utils.getRadians(angle)) // need to convert to radians for Math.sin        \n        let TempPoint = geom2d.Point.fromPolar(radius, angle)\n        // move the point so it's centered on the svg \n        TempPoint.moveRel(offsetX,offsetY)\n        coordinatesString += TempPoint.toString(',', false)  + ' '\n  }  \n  // now update the points attributes in the existing svg polyline to display the flower on screen\n  ElPolyPolarGraph.setAttribute('points', coordinatesString)  \n```\n \n [You can find other polar equations here](https://faculty.math.illinois.edu/~rasekh2/math231(s2016)/PolarEquations.pdf)\n\n## Develop \nyou can clone this repository with a git clone\nthen run a npm install in the cloned directory  \nand use the various scripts inside package.json to help you work\n\n[Travis CI](https://travis-ci.org/lao-tseu-is-alive/cgil-2dgeom/)\n\n### run unit tests with\n\n```bash\nnpx jest -i --watch\n```\n\nor just\n```bash\nnpm run test\n```\n\n### run eslint with\n\n```bash\nnpm run lint\n```\n\n",
+    "content": "# cgil-geom2d\na light 2d geometry utility classes like Point, Line written in ES6 Javascript (~12k for the CommonJS lib).\n\n[![Build Status](https://travis-ci.org/lao-tseu-is-alive/cgil-2dgeom.png?branch=master)](https://travis-ci.org/lao-tseu-is-alive/cgil-2dgeom)\n[![Coverage](https://img.shields.io/codecov/c/github/lao-tseu-is-alive/cgil-2dgeom/master.svg)](https://codecov.io/gh/lao-tseu-is-alive/cgil-2dgeom)\n[![Coverage Status](https://coveralls.io/repos/github/lao-tseu-is-alive/cgil-2dgeom/badge.svg?branch=master)](https://coveralls.io/github/lao-tseu-is-alive/cgil-2dgeom?branch=master)\n[![HitCount](http://hits.dwyl.io/lao-tseu-is-alive/cgil-2dgeom.svg)](http://hits.dwyl.io/lao-tseu-is-alive/cgil-2dgeom)\n\nthis code is licensed under the terms of the MIT License.\n\n[Documentation](https://lao-tseu-is-alive.github.io/cgil-2dgeom/docs/) generated from source with [esdoc](https://esdoc.org/)\n\n## Using it inside the browser\nyou can download the UMD library [file dist/geom2d.min.js](https://raw.githubusercontent.com/lao-tseu-is-alive/cgil-2dgeom/master/dist/geom2d.min.js)\ndirecty to your computer \nthen you just need to include it as usual (adapting the path to your case):\n```html\n<script src=\"dist/geom2d.min.js\"></script>\n```\nyou can see an example above \n\nyou can get a nice explanation for the various library formats in [this medium article](https://medium.com/computed-comparisons/commonjs-vs-amd-vs-requirejs-vs-es6-modules-2e814b114a0b)\n\nbut very basically \n - cjs (commonjs2): You will use this format in a build tool, it excludes all modules in node_modules folder from bundled files.\n - umd: You will use this format directly in browser, all 3rd-party packages (dependencies) will be bundled within.\n\n\n## Installation with npm\n\nInside an already created npm project directory (do you have a package.json in it ?) \nyou can as usual install `cgil-geom2d` in the shell with :\n\n```bash\nnpm install cgil-geom2d --save\n```\n\nthen you can import/require the CommonJS bundle in **dist/geom2d.cjs.js** \n\n\n## Example\nlet's use the library Point class to create a nice 12 petal's flowers using a polar equation like this : \n**r = a sin 6θ**\n\n[Jump to the full example file](https://lao-tseu-is-alive.github.io/cgil-2dgeom/examples/example_UMD_flower.html)\n\n![alt text](https://raw.githubusercontent.com/lao-tseu-is-alive/cgil-2dgeom/master/examples/images/cgil-geom2d_12_petals_flower_example.png \"Using the geom2d.Point class to create a nice 12 petal's flowers from a polar equation\")\n\n```html\n<script src=\"../dist/geom2d.min.js\"></script>\n<svg height=\"500\" width=\"500\">\n  <line  id='xaxis' x1=\"250\" y1=\"0\" x2=\"250\" y2=\"500\" class=\"svgaxis\" />\n  <line  id='yaxis' x1=\"0\" y1=\"250\" x2=\"500\" y2=\"250\" class=\"svgaxis\" />\n  <polyline id='mypolargraph' points=\"0,40 40,40 40,80 80,80 \" class=\"svg-flower-petal\"/>\n  <circle cx=\"250\" cy=\"250\" r=\"40\" class=\"svg-flower-center\" />\n</svg>\n```\n\n```javascript\n  let ElPolyPolarGraph = document.getElementById('mypolargraph')\n  let petalLength = 200\n  let coordinatesString = '' // to accumulate the points coordinates\n  // let's center the drawing on the svg\n  const offsetX = 250 \n  const offsetY = 250\n  // let's iterate over a full 360 degree circle\n  for (let angle = 0; angle < 360; angle += 2) {\n        let radius = petalLength * Math.sin(6 * geom2d.utils.getRadians(angle)) // need to convert to radians for Math.sin        \n        let TempPoint = geom2d.Point.fromPolar(radius, angle)\n        // move the point so it's centered on the svg \n        TempPoint.moveRel(offsetX,offsetY)\n        coordinatesString += TempPoint.toString(',', false)  + ' '\n  }  \n  // now update the points attributes in the existing svg polyline to display the flower on screen\n  ElPolyPolarGraph.setAttribute('points', coordinatesString)  \n```\n \n [You can find other polar equations here](https://faculty.math.illinois.edu/~rasekh2/math231(s2016)/PolarEquations.pdf)\n\n## Develop \nyou can clone this repository with a git clone\nthen run a npm install in the cloned directory  \nand use the various scripts inside package.json to help you work\n\n[Travis CI](https://travis-ci.org/lao-tseu-is-alive/cgil-2dgeom/)\n\n### create the CommonJS bundle in dist folder\n\n```bash\nnpm run build:CJS\n```\n\n### create the UMD bundle in dist folder\n\n```bash\nnpm run build:UMD\n```\n\n### run unit tests with jest\n\n```bash\nnpx jest -i --watch\n```\n\nor just\n```bash\nnpm run test\n```\n\n### run eslint with\n\n```bash\nnpm run lint\n```\n\n",
     "longname": "/home/cgil/WebstormProjects/cgil-geom2d/README.md",
     "name": "./README.md",
     "static": true,
@@ -2262,7 +2508,7 @@
   },
   {
     "kind": "packageJSON",
-    "content": "{\n  \"name\": \"cgil-geom2d\",\n  \"version\": \"1.0.1\",\n  \"description\": \"2d geometry ES6 javascript classes like Point Lines with polar coordinates conversions..\",\n  \"main\": \"dist/geom2d.min.js\",\n  \"scripts\": {\n    \"dev\": \"poi\",\n    \"build:CJS\": \"poi build -c poi.config-CommonJS.js \",\n    \"build:UMD\": \"poi build -c poi.config-umd.js \",\n    \"lint\": \"eslint src/*.js\",\n    \"test\": \"tyu -- --watch \",\n    \"test-ci-travis\": \"jest -i\",\n    \"jest\": \"jest\",\n    \"doc\": \"esdoc\"\n  },\n  \"repository\": {\n    \"type\": \"git\",\n    \"url\": \"https://github.com/lao-tseu-is-alive/cgil-2dgeom.git\"\n  },\n  \"keywords\": [\n    \"2d\",\n    \"geometry\",\n    \"class\",\n    \"point\",\n    \"line\",\n    \"polar coordinates\"\n  ],\n  \"licenses\": [\n    {\n      \"type\": \"MIT\",\n      \"url\": \"http://www.opensource.org/licenses/mit-license.php\"\n    }\n  ],\n  \"author\": \"cgil <lao.tseu.is.alive@gmail.com>\",\n  \"license\": \"MIT\",\n  \"bugs\": {\n    \"url\": \"https://github.com/lao-tseu-is-alive/cgil-2dgeom/issues\"\n  },\n  \"homepage\": \"https://github.com/lao-tseu-is-alive/cgil-2dgeom#readme\",\n  \"jest\": {\n    \"verbose\": true,\n    \"coverageDirectory\": \"./coverage/\",\n    \"collectCoverage\": true,\n    \"collectCoverageFrom\": [\n      \"**/src/*.{js,jsx}\",\n      \"!**/node_modules/**\",\n      \"!**/vendor/**\"\n    ]\n  },\n  \"devDependencies\": {\n    \"babel-core\": \"^6.26.0\",\n    \"babel-eslint\": \"^8.2.2\",\n    \"babel-jest\": \"^22.4.1\",\n    \"esdoc\": \"^1.0.4\",\n    \"esdoc-standard-plugin\": \"^1.0.0\",\n    \"eslint\": \"^4.19.1\",\n    \"eslint-config-standard\": \"^11.0.0\",\n    \"eslint-config-xo\": \"^0.20.1\",\n    \"eslint-import-resolver-webpack\": \"^0.9.0\",\n    \"eslint-plugin-import\": \"^2.10.0\",\n    \"eslint-plugin-node\": \"^6.0.1\",\n    \"eslint-plugin-promise\": \"^3.7.0\",\n    \"eslint-plugin-standard\": \"^3.0.1\",\n    \"jest\": \"^22.4.2\",\n    \"poi\": \"^9.6.13\",\n    \"regenerator-runtime\": \"^0.11.1\",\n    \"tyu\": \"^1.0.5\"\n  }\n}\n",
+    "content": "{\n  \"name\": \"cgil-geom2d\",\n  \"version\": \"1.0.1\",\n  \"description\": \"2d geometry ES6 javascript classes like Point Lines with polar coordinates conversions..\",\n  \"main\": \"dist/geom2d.min.js\",\n  \"scripts\": {\n    \"dev\": \"poi\",\n    \"build:CJS\": \"poi build -c poi.config-CommonJS.js \",\n    \"build:UMD\": \"poi build -c poi.config-umd.js \",\n    \"lint\": \"eslint src/*.js\",\n    \"test\": \"tyu -- --watch \",\n    \"test-ci-travis\": \"jest -i\",\n    \"jest\": \"jest\",\n    \"doc\": \"esdoc\"\n  },\n  \"repository\": {\n    \"type\": \"git\",\n    \"url\": \"https://github.com/lao-tseu-is-alive/cgil-2dgeom.git\"\n  },\n  \"keywords\": [\n    \"2d\",\n    \"geometry\",\n    \"class\",\n    \"point\",\n    \"line\",\n    \"polar coordinates\"\n  ],\n  \"author\": \"cgil <lao.tseu.is.alive@gmail.com>\",\n  \"license\": \"MIT\",\n  \"bugs\": {\n    \"url\": \"https://github.com/lao-tseu-is-alive/cgil-2dgeom/issues\"\n  },\n  \"homepage\": \"https://github.com/lao-tseu-is-alive/cgil-2dgeom#readme\",\n  \"jest\": {\n    \"verbose\": true,\n    \"coverageDirectory\": \"./coverage/\",\n    \"collectCoverage\": true,\n    \"collectCoverageFrom\": [\n      \"**/src/*.{js,jsx}\",\n      \"!**/node_modules/**\",\n      \"!**/vendor/**\"\n    ]\n  },\n  \"devDependencies\": {\n    \"babel-core\": \"^6.26.0\",\n    \"babel-eslint\": \"^8.2.2\",\n    \"babel-jest\": \"^22.4.1\",\n    \"esdoc\": \"^1.0.4\",\n    \"esdoc-standard-plugin\": \"^1.0.0\",\n    \"eslint\": \"^4.19.1\",\n    \"eslint-config-standard\": \"^11.0.0\",\n    \"eslint-config-xo\": \"^0.20.1\",\n    \"eslint-import-resolver-webpack\": \"^0.9.0\",\n    \"eslint-plugin-import\": \"^2.10.0\",\n    \"eslint-plugin-node\": \"^6.0.1\",\n    \"eslint-plugin-promise\": \"^3.7.0\",\n    \"eslint-plugin-standard\": \"^3.0.1\",\n    \"jest\": \"^22.4.2\",\n    \"poi\": \"^9.6.13\",\n    \"regenerator-runtime\": \"^0.11.1\",\n    \"tyu\": \"^1.0.5\"\n  }\n}\n",
     "longname": "/home/cgil/WebstormProjects/cgil-geom2d/package.json",
     "name": "package.json",
     "static": true,

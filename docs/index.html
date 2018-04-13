@@ -52,6 +52,7 @@
 <a href="https://coveralls.io/github/lao-tseu-is-alive/cgil-2dgeom?branch=master"><img src="https://coveralls.io/repos/github/lao-tseu-is-alive/cgil-2dgeom/badge.svg?branch=master" alt="Coverage Status"></a>
 <a href="http://hits.dwyl.io/lao-tseu-is-alive/cgil-2dgeom"><img src="http://hits.dwyl.io/lao-tseu-is-alive/cgil-2dgeom.svg" alt="HitCount"></a></p>
 <p>this code is licensed under the terms of the MIT License.</p>
+<p><a href="https://lao-tseu-is-alive.github.io/cgil-2dgeom/docs/">Documentation</a> generated from source with <a href="https://esdoc.org/">esdoc</a></p>
 <h2 id="using-it-inside-the-browser">Using it inside the browser</h2><p>you can download the UMD library <a href="https://raw.githubusercontent.com/lao-tseu-is-alive/cgil-2dgeom/master/dist/geom2d.min.js">file dist/geom2d.min.js</a>
 directy to your computer 
 then you just need to include it as usual (adapting the path to your case):</p>
@@ -71,14 +72,14 @@ you can as usual install <code>cgil-geom2d</code> in the shell with :</p>
 <p>then you can import/require the CommonJS bundle in <strong>dist/geom2d.cjs.js</strong> </p>
 <h2 id="example">Example</h2><p>let&apos;s use the library Point class to create a nice 12 petal&apos;s flowers using a polar equation like this : 
 <strong>r = a sin 6&#x3B8;</strong></p>
-<p><a href="https://lao-tseu-is-alive.github.io/cgil-2dgeom/docs/example_UMD.html">Jump to the full example file</a></p>
-<p><img src="https://raw.githubusercontent.com/lao-tseu-is-alive/cgil-2dgeom/master/docs/images/cgil-geom2d_12_petals_flower_example.png" alt="alt text" title="Using the geom2d.Point class to create a nice 12 petal&apos;s flowers from a polar equation"></p>
+<p><a href="https://lao-tseu-is-alive.github.io/cgil-2dgeom/examples/example_UMD_flower.html">Jump to the full example file</a></p>
+<p><img src="https://raw.githubusercontent.com/lao-tseu-is-alive/cgil-2dgeom/master/examples/images/cgil-geom2d_12_petals_flower_example.png" alt="alt text" title="Using the geom2d.Point class to create a nice 12 petal&apos;s flowers from a polar equation"></p>
 <pre><code class="lang-html"><code class="source-code prettyprint">&lt;script src=&quot;../dist/geom2d.min.js&quot;&gt;&lt;/script&gt;
 &lt;svg height=&quot;500&quot; width=&quot;500&quot;&gt;
-  &lt;line  id=&apos;xaxis&apos; x1=&quot;250&quot; y1=&quot;0&quot; x2=&quot;250&quot; y2=&quot;500&quot; style=&quot;stroke:rgb(255,255,255);stroke-width:2&quot; /&gt;
-  &lt;line  id=&apos;yaxis&apos; x1=&quot;0&quot; y1=&quot;250&quot; x2=&quot;500&quot; y2=&quot;250&quot; style=&quot;stroke:rgb(255,255,255);stroke-width:2&quot; /&gt;  
-  &lt;polyline id=&apos;mypolargraph&apos; points=&quot;0,40 40,40 40,80 80,80 80,120 120,120 120,160&quot;  style=&quot;fill:white;stroke:red;stroke-width:4&quot; /&gt;
-  &lt;circle cx=&quot;250&quot; cy=&quot;250&quot; r=&quot;40&quot; stroke=&quot;orange&quot; stroke-width=&quot;1&quot; fill=&quot;yellow&quot; /&gt;
+  &lt;line  id=&apos;xaxis&apos; x1=&quot;250&quot; y1=&quot;0&quot; x2=&quot;250&quot; y2=&quot;500&quot; class=&quot;svgaxis&quot; /&gt;
+  &lt;line  id=&apos;yaxis&apos; x1=&quot;0&quot; y1=&quot;250&quot; x2=&quot;500&quot; y2=&quot;250&quot; class=&quot;svgaxis&quot; /&gt;
+  &lt;polyline id=&apos;mypolargraph&apos; points=&quot;0,40 40,40 40,80 80,80 &quot; class=&quot;svg-flower-petal&quot;/&gt;
+  &lt;circle cx=&quot;250&quot; cy=&quot;250&quot; r=&quot;40&quot; class=&quot;svg-flower-center&quot; /&gt;
 &lt;/svg&gt;</code>
 </code></pre>
 <pre><code class="lang-javascript"><code class="source-code prettyprint">  let ElPolyPolarGraph = document.getElementById(&apos;mypolargraph&apos;)
@@ -102,7 +103,11 @@ you can as usual install <code>cgil-geom2d</code> in the shell with :</p>
 <h2 id="develop">Develop</h2><p>you can clone this repository with a git clone
 then run a npm install in the cloned directory<br>and use the various scripts inside package.json to help you work</p>
 <p><a href="https://travis-ci.org/lao-tseu-is-alive/cgil-2dgeom/">Travis CI</a></p>
-<h3 id="run-unit-tests-with">run unit tests with</h3><pre><code class="lang-bash"><code class="source-code prettyprint">npx jest -i --watch</code>
+<h3 id="create-the-commonjs-bundle-in-dist-folder">create the CommonJS bundle in dist folder</h3><pre><code class="lang-bash"><code class="source-code prettyprint">npm run build:CJS</code>
+</code></pre>
+<h3 id="create-the-umd-bundle-in-dist-folder">create the UMD bundle in dist folder</h3><pre><code class="lang-bash"><code class="source-code prettyprint">npm run build:UMD</code>
+</code></pre>
+<h3 id="run-unit-tests-with-jest">run unit tests with jest</h3><pre><code class="lang-bash"><code class="source-code prettyprint">npx jest -i --watch</code>
 </code></pre>
 <p>or just</p>
 <pre><code class="lang-bash"><code class="source-code prettyprint">npm run test</code>

@@ -118,6 +118,24 @@ describe(&apos;Line.js module&apos;, () =&gt; {
     })
   })
 
+  describe(&apos;Line.fromLine(otherLine)&apos;, () =&gt; {
+    const L2 = Line.fromLine(L1)
+    test(&apos;should throw an Error when parameter is not a valid Line&apos;, () =&gt; {
+      expect(Line.fromLine.bind(undefined, [])).toThrow(TypeError, &apos;fromLine needs parameter otherLine of type Line&apos;)
+    })
+    test(&apos;should have identical start and end points&apos;, () =&gt; {
+      expect(L2.startPoint.equal(L1.startPoint)).toBe(true)
+      expect(L2.endPoint.equal(L1.endPoint)).toBe(true)
+    })
+    test(&apos;should copy Points by value in the new Line&apos;, () =&gt; {
+      L2.startPoint.moveTo(1.0, 1.0)
+      expect(L2.startPoint.equal(new Point(1.0, 1.0))).toBe(true)
+      expect(L2.startPoint.equal(L1.startPoint)).toBe(false)
+      expect(L1.startPoint.equal(new Point())).toBe(true)
+      expect(P0.equal(new Point())).toEqual(true)
+    })
+  })
+
   describe(&apos;Line startPoint and endPoint accessors&apos;, () =&gt; {
     const L2 = new Line()
     L2.startPoint = P0
@@ -194,6 +212,41 @@ describe(&apos;Line.js module&apos;, () =&gt; {
     })
   })
 
+  describe(&apos;Line.toArray allows to get back array [[x1,y1],[x2,y2]]&apos;, () =&gt; {
+    const tmpLineArray = L1.toArray()
+    test(&apos;should return an array&apos;, () =&gt; {
+      expect(tmpLineArray).toBeInstanceOf(Array)
+    })
+    test(&apos;should copy the startPoint value correctly in the array&apos;, () =&gt; {
+      expect(tmpLineArray[0]).toEqual([0, 0])
+    })
+    test(&apos;should copy the endPoint value correctly in the array&apos;, () =&gt; {
+      expect(tmpLineArray[1]).toEqual([1.0, 2.0])
+    })
+  })
+
+  describe(&apos;Line can be exported to OGC and Postgis&apos;, () =&gt; {
+    test(
+      &apos;toWKT should return a correct OGC Well-known text (WKT) representation&apos;,
+      () =&gt; {
+        expect(L1.toWKT()).toEqual(`LINESTRING(${L1.startPoint.x} ${L1.startPoint.y}, ${L1.endPoint.x} ${L1.endPoint.y})`)
+      }
+    )
+    test(
+      &apos;toEWKT should return a correct Postgis Extended Well-known text (EWKT) representation&apos;,
+      () =&gt; {
+        const srid = 21781
+        expect(L1.toEWKT()).toEqual(`SRID=${srid};LINESTRING(${L1.startPoint.x} ${L1.startPoint.y}, ${L1.endPoint.x} ${L1.endPoint.y})`)
+      }
+    )
+    test(
+      &apos;toGeoJSON should return a correct GeoJSON (http://geojson.org/) representation&apos;,
+      () =&gt; {
+        expect(L1.toGeoJSON()).toEqual(`{&quot;type&quot;:&quot;LineString&quot;,&quot;coordinates&quot;:[[${L1.startPoint.x},${L1.startPoint.y}],[${L1.endPoint.x},${L1.endPoint.y}]]}`)
+      }
+    )
+  })
+
   describe(&apos;Line.getLength()&apos;, () =&gt; {
     test(&apos;should return the correct length of the line&apos;, () =&gt; {
       const Pa = new Point(1, 1)
@@ -201,6 +254,52 @@ describe(&apos;Line.js module&apos;, () =&gt; {
       const LLength = new Line(Pa, Pb)
       expect(LLength.getLength())
         .toEqual(5)
+    })
+  })
+
+  describe(&apos;Line.getSlope()&apos;, () =&gt; {
+    const POrigin = new Point() // 0,0 implicit
+    const LHorizontal = new Line(POrigin, new Point(5, 0))
+    test(&apos;Slope for Line(POrigin, (5, 0))should equal 0 (horizontal line at origin)&apos;, () =&gt; {
+      expect(LHorizontal.getSlope()).toEqual(0)
+    })
+    test(&apos;Slope for Line((1,2), (3, 2))should should equal  0 (horizontal line)&apos;, () =&gt; {
+      expect(new Line(new Point(1, 2), new Point(3, 2)).getSlope()).toEqual(0)
+    })
+    test(&apos;Slope for Line((1,1), (2, 2))should return 1 (45deg line)&apos;, () =&gt; {
+      expect(new Line(new Point(1, 1), new Point(2, 2)).getSlope()).toEqual(1)
+    })
+    test(&apos;Slope for Line((1,1), (2, 0))should return 1 (-45deg line)&apos;, () =&gt; {
+      expect(new Line(new Point(1, 1), new Point(2, 0)).getSlope()).toEqual(-1)
+    })
+    test(&apos;Slope for Line((1,1), (2, 0))should return Infinity (vertical line)&apos;, () =&gt; {
+      expect(new Line(new Point(1, 1), new Point(1, 2)).getSlope()).toEqual(Infinity)
+    })
+    test(&apos;Slope for Line((0.3,0.2), (1.6, 0.5))should return Infinity (vertical line)&apos;, () =&gt; {
+      expect(new Line(new Point(0.3, 0.2), new Point(1.6, 0.5)).getSlope()).toBeCloseTo(0.23076923, 8)
+    })
+  })
+
+  describe(&apos;Line.getYintercept()&apos;, () =&gt; {
+    const POrigin = new Point() // 0,0 implicit
+    const LHorizontal = new Line(POrigin, new Point(5, 0))
+    test(&apos;YIntercept for Line(POrigin, (5, 0))should equal 0 (horizontal line at origin)&apos;, () =&gt; {
+      expect(LHorizontal.getYIntercept()).toEqual(0)
+    })
+    test(&apos;YIntercept for Line((1,2), (3, 2))should should equal  0 (horizontal line)&apos;, () =&gt; {
+      expect(new Line(new Point(1, 2), new Point(3, 2)).getYIntercept()).toEqual(2)
+    })
+    test(&apos;YIntercept for Line((1,1), (2, 2))should return 1 (45deg line)&apos;, () =&gt; {
+      expect(new Line(new Point(1, 1), new Point(2, 2)).getYIntercept()).toEqual(0)
+    })
+    test(&apos;YIntercept for Line((1,1), (2, 0))should return 1 (-45deg line)&apos;, () =&gt; {
+      expect(new Line(new Point(1, 1), new Point(2, 0)).getYIntercept()).toEqual(2)
+    })
+    test(&apos;YIntercept for Line((1,1), (2, 0))should return Infinity (vertical line)&apos;, () =&gt; {
+      expect(new Line(new Point(1, 1), new Point(1, 2)).getYIntercept()).toEqual(NaN)
+    })
+    test(&apos;YIntercept for Line((0.3,0.2), (1.6, 0.5))should return Infinity (vertical line)&apos;, () =&gt; {
+      expect(new Line(new Point(0.3, 0.2), new Point(1.6, 0.5)).getYIntercept()).toBeCloseTo(0.13076923, 8)
     })
   })
 })
