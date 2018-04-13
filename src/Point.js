@@ -128,8 +128,8 @@ export default class Point {
   }
 
   /**
-   * give an array representation of this class instance
-   * @returns {Array}
+   * give an array representation of this Point class instance [x, y]
+   * @returns {Array} [x, y]
    */
   toArray () {
     return [this.x, this.y]

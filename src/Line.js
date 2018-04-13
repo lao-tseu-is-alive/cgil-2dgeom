@@ -8,7 +8,9 @@ const lineDefaultOptions = {
 }
 
 /**
- * Class representing  a line in 2 dimension cartesian space
+ * Class representing a line segment in 2 dimension cartesian space
+ * and helpers function to get other representations like toWKT, toGeoJSON etc
+ * the line equation y = m*x + b can be derived with m=getSlope() and b=getYintercept() methods
  */
 export default class Line {
   /**
@@ -83,11 +85,53 @@ export default class Line {
   }
 
   /**
-   * give a string representation of this class instance
+   * give a string representation of this Line class instance
    * @returns {string}
    */
   toString () {
     return `Line(${this.startPoint.toString()} -> ${this.endPoint.toString()})`
+  }
+
+  /**
+   * give an array representation of this Line class instance,
+   * you can use Array.flatten()  to convert to [x1, y1, x2, y2]
+   * if flatten is not implemented use reduce instead : arrResult.reduce((acc, val) => acc.concat(val), []);
+   * @returns {Array} an Array giving the coord of the line like this [[x1, y1], [x2, y2]]
+   */
+  toArray () {
+    let tmpArray = []
+    tmpArray.push(this.startPoint.toArray())
+    tmpArray.push(this.endPoint.toArray())
+    return tmpArray
+  }
+
+  /**
+   * give an OGC Well-known text (WKT) representation of this class instance
+   * https://en.wikipedia.org/wiki/Well-known_text
+   * @returns {string}
+   */
+  toWKT () {
+    return `LINESTRING(${this.startPoint.x} ${this.startPoint.y}, ${this.endPoint.x} ${this.endPoint.y})`
+  }
+
+  /**
+   * give an Postgis Extended Well-known text (EWKT) representation of this class instance
+   * https://postgis.net/docs/using_postgis_dbmanagement.html#EWKB_EWKT
+   * @param {number} srid is the Spatial reference systems identifier EPSG code default is 21781 for Switzerland MN03
+   * @returns {string}
+   */
+  toEWKT (srid = 21781) {
+    return `SRID=${srid};LINESTRING(${this.startPoint.x} ${this.startPoint.y}, ${this.endPoint.x} ${this.endPoint.y})`
+  }
+
+  // TO implement toEWKB I can maybe use this lib : https://github.com/cschwarz/wkx
+
+  /**
+   * give a GeoJSON geometry (http://geojson.org/) representation of this class instance geometry
+   * @returns {string}
+   */
+  toGeoJSON () {
+    return `{"type":"LineString","coordinates":[[${this.startPoint.x},${this.startPoint.y}],[${this.endPoint.x},${this.endPoint.y}]]}`
   }
 
   /**

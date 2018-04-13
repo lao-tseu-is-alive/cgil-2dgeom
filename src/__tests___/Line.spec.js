@@ -145,6 +145,41 @@ describe('Line.js module', () => {
     })
   })
 
+  describe('Line.toArray allows to get back array [[x1,y1],[x2,y2]]', () => {
+    const tmpLineArray = L1.toArray()
+    test('should return an array', () => {
+      expect(tmpLineArray).toBeInstanceOf(Array)
+    })
+    test('should copy the startPoint value correctly in the array', () => {
+      expect(tmpLineArray[0]).toEqual([0, 0])
+    })
+    test('should copy the endPoint value correctly in the array', () => {
+      expect(tmpLineArray[1]).toEqual([1.0, 2.0])
+    })
+  })
+
+  describe('Line can be exported to OGC and Postgis', () => {
+    test(
+      'toWKT should return a correct OGC Well-known text (WKT) representation',
+      () => {
+        expect(L1.toWKT()).toEqual(`LINESTRING(${L1.startPoint.x} ${L1.startPoint.y}, ${L1.endPoint.x} ${L1.endPoint.y})`)
+      }
+    )
+    test(
+      'toEWKT should return a correct Postgis Extended Well-known text (EWKT) representation',
+      () => {
+        const srid = 21781
+        expect(L1.toEWKT()).toEqual(`SRID=${srid};LINESTRING(${L1.startPoint.x} ${L1.startPoint.y}, ${L1.endPoint.x} ${L1.endPoint.y})`)
+      }
+    )
+    test(
+      'toGeoJSON should return a correct GeoJSON (http://geojson.org/) representation',
+      () => {
+        expect(L1.toGeoJSON()).toEqual(`{"type":"LineString","coordinates":[[${L1.startPoint.x},${L1.startPoint.y}],[${L1.endPoint.x},${L1.endPoint.y}]]}`)
+      }
+    )
+  })
+
   describe('Line.getLength()', () => {
     test('should return the correct length of the line', () => {
       const Pa = new Point(1, 1)
