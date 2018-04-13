@@ -69,6 +69,24 @@ describe('Line.js module', () => {
     })
   })
 
+  describe('Line.fromLine(otherLine)', () => {
+    const L2 = Line.fromLine(L1)
+    test('should throw an Error when parameter is not a valid Line', () => {
+      expect(Line.fromLine.bind(undefined, [])).toThrow(TypeError, 'fromLine needs parameter otherLine of type Line')
+    })
+    test('should have identical start and end points', () => {
+      expect(L2.startPoint.equal(L1.startPoint)).toBe(true)
+      expect(L2.endPoint.equal(L1.endPoint)).toBe(true)
+    })
+    test('should copy Points by value in the new Line', () => {
+      L2.startPoint.moveTo(1.0, 1.0)
+      expect(L2.startPoint.equal(new Point(1.0, 1.0))).toBe(true)
+      expect(L2.startPoint.equal(L1.startPoint)).toBe(false)
+      expect(L1.startPoint.equal(new Point())).toBe(true)
+      expect(P0.equal(new Point())).toEqual(true)
+    })
+  })
+
   describe('Line startPoint and endPoint accessors', () => {
     const L2 = new Line()
     L2.startPoint = P0

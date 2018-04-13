@@ -8,9 +8,10 @@ export default class Point {
   /**
    * Creates a point
    * @param {number} x coordinates in cartesian space or array with [x, y] numbers
-   * @param {number} y coordinates in cartesian space
+   * @param {number} y coordinates in cartesian space, ignored if first argument is an array
    */
   constructor (x = 0, y = 0) {
+    // allow first argument to be an array if values in 2 first elements are numbers
     if ((typeof x[0] === 'number') && (typeof x[1] === 'number')) {
       // here i am using x and y attribute setter so that correct checks are done
       this.x = x[0]
@@ -52,7 +53,7 @@ export default class Point {
   }
 
   /**
-   * get a new Point that is a copy of the otherPoint passed has parameter
+   * get a new Point that is a copy (clone) of the otherPoint passed has parameter
    * @param {Point} otherPoint is the Point you want to copy
    * @returns {Point} a new Point located at the same cartesian coordinates as otherPoint
    */

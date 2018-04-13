@@ -27,6 +27,19 @@ export default class Line {
   }
 
   /**
+   * get a new Line that is a copy (clone) of the otherLine passed has parameter
+   * @param {Line} otherLine is the Line you want to copy
+   * @returns {Line} a new Line located at the same cartesian coordinates as otherLine
+   */
+  static fromLine (otherLine) {
+    if (otherLine instanceof Line) {
+      return new Line(otherLine.startPoint, otherLine.endPoint)
+    } else {
+      throw new TypeError('fromLine needs parameter otherLine of type Line')
+    }
+  }
+
+  /**
    * Get the starting Point.
    * @return {Point} The starting Point of this line.
    */
