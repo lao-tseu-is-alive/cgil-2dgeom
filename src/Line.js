@@ -15,8 +15,8 @@ const lineDefaultOptions = {
 export default class Line {
   /**
    * Creates a line
-   * @param {Point} startPoint of the Line
-   * @param {Point} endPoint of the Line
+   * @param {Point} startPoint of the Line (will be copied by value)
+   * @param {Point} endPoint of the Line (will be copied by value)
    * @param {Object} params
    */
   constructor (startPoint = new Point(), endPoint = new Point(1, 1), params = null) {
