@@ -1,18 +1,16 @@
 # cgil-geom2d
 a light 2d geometry utility classes like Point, Line written in ES6 Javascript (~12k for the CommonJS lib).
 
-[![Build Status](https://travis-ci.org/lao-tseu-is-alive/cgil-2dgeom.png?branch=master)](https://travis-ci.org/lao-tseu-is-alive/cgil-2dgeom)
-[![Coverage](https://img.shields.io/codecov/c/github/lao-tseu-is-alive/cgil-2dgeom/master.svg)](https://codecov.io/gh/lao-tseu-is-alive/cgil-2dgeom)
-[![Coverage Status](https://coveralls.io/repos/github/lao-tseu-is-alive/cgil-2dgeom/badge.svg?branch=master)](https://coveralls.io/github/lao-tseu-is-alive/cgil-2dgeom?branch=master)
-[![HitCount](http://hits.dwyl.io/lao-tseu-is-alive/cgil-2dgeom.svg)](http://hits.dwyl.io/lao-tseu-is-alive/cgil-2dgeom)
+### REPOSITORY is now archived and read-only as of 2024-04-29
+#### please consider using this new repository : [simple-2d-geometry](https://github.com/lao-tseu-is-alive/simple-2d-geometry) a full rewrite using TypeScript.
+
 
 this code is licensed under the terms of the MIT License.
 
 [Documentation](https://lao-tseu-is-alive.github.io/cgil-2dgeom/docs/) generated from source with [esdoc](https://esdoc.org/)
 
 ## Using it inside the browser
-you can download the UMD library [file dist/geom2d.min.js](https://raw.githubusercontent.com/lao-tseu-is-alive/cgil-2dgeom/master/dist/geom2d.min.js)
-directy to your computer 
+you can download the UMD library [file dist/geom2d.min.js](https://raw.githubusercontent.com/lao-tseu-is-alive/cgil-2dgeom/master/dist/geom2d.min.js) to your computer 
 then you just need to include it as usual (adapting the path to your case):
 ```html
 <script src="dist/geom2d.min.js"></script>
